@@ -1,11 +1,13 @@
-package com.whosfritz.breakdecider.Services;
+package com.whosfritz.breakdecider.Data.Services;
 
-import com.whosfritz.breakdecider.Repositories.BreakDeciderUserRepository;
+import com.whosfritz.breakdecider.Data.Entities.BreakDeciderUser;
+import com.whosfritz.breakdecider.Data.Repositories.BreakDeciderUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -19,7 +21,14 @@ public class BreakDeciderUserService implements UserDetailsService {
                 -> new UsernameNotFoundException("User " + username + " not found"));
     }
 
+    @Transactional
     public boolean userExists(String username) {
         return breakDeciderUserRepository.existsByUsername(username);
+    }
+
+
+    @Transactional
+    public void save(BreakDeciderUser breakDeciderUser) {
+        breakDeciderUserRepository.save(breakDeciderUser);
     }
 }

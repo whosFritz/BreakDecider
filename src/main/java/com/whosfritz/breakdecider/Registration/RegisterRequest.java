@@ -1,3 +1,5 @@
+package com.whosfritz.breakdecider.Registration;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

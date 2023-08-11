@@ -1,4 +1,4 @@
-package com.whosfritz.breakdecider.Entities;
+package com.whosfritz.breakdecider.Data.Entities;
 
 
 import jakarta.persistence.*;
@@ -35,6 +35,9 @@ public class BreakDeciderUser implements UserDetails {
     private Boolean locked;
     @Column(name = "enabled")
     private Boolean enabled;
+    
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Abstimmungsthema abstimmungsthema;
 
 
     public BreakDeciderUser(String username,

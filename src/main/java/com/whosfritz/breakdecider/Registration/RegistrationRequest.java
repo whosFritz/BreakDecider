@@ -1,15 +1,17 @@
 package com.whosfritz.breakdecider.Registration;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
+@NoArgsConstructor
 public class RegistrationRequest {
-    private final String username;
-    private final String password;
+
+    private String username;
+    private String password;
+
 }

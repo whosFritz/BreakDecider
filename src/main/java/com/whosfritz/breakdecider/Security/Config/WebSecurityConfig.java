@@ -1,7 +1,7 @@
 package com.whosfritz.breakdecider.Security.Config;
 
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
-import com.whosfritz.breakdecider.Services.BreakDeciderUserService;
+import com.whosfritz.breakdecider.Data.Services.BreakDeciderUserService;
 import com.whosfritz.breakdecider.ui.Views.LoginView;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -1,8 +1,9 @@
-package com.whosfritz.breakdecider.Services;
+package com.whosfritz.breakdecider.Data.Services;
 
-import com.whosfritz.breakdecider.Entities.Stimmzettel;
-import com.whosfritz.breakdecider.Repositories.StimmzettelRepository;
+import com.whosfritz.breakdecider.Data.Entities.Stimmzettel;
+import com.whosfritz.breakdecider.Data.Repositories.StimmzettelRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,18 +16,26 @@ public class StimmzettelService {
         this.stimmzettelRepository = stimmzettelRepository;
     }
 
+
+    @Transactional
     public List<Stimmzettel> getAllStimmzettel() {
         return stimmzettelRepository.findAll();
     }
 
+
+    @Transactional
     public Stimmzettel getStimmzettelById(Long id) {
         return stimmzettelRepository.findById(id).orElse(null);
     }
 
+
+    @Transactional
     public Stimmzettel saveStimmzettel(Stimmzettel stimmzettel) {
         return stimmzettelRepository.save(stimmzettel);
     }
 
+
+    @Transactional
     public void deleteStimmzettel(Long id) {
         stimmzettelRepository.deleteById(id);
     }

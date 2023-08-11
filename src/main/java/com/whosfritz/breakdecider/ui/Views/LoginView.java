@@ -9,13 +9,15 @@ import com.vaadin.flow.router.BeforeEnterListener;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Route("login")
 @PageTitle("Login | BreakDecider")
 @AnonymousAllowed
 public class LoginView extends VerticalLayout implements BeforeEnterListener {
     private final LoginForm loginForm = new LoginForm();
-//    Logger logger = LoggerFactory.getLogger(LoginView.class);
+    Logger logger = LoggerFactory.getLogger(LoginView.class);
 
 
     public LoginView() {
@@ -43,8 +45,8 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
 
         loginForm.setAction("login");
         loginForm.setForgotPasswordButtonVisible(true);
-        loginForm.addForgotPasswordListener(event -> Notification.show("Wenden Sie sich dafür bitte an Ihren Administrator.❤️"));
-        loginForm.addLoginListener(event -> System.out.println("User versuchte sich einzuloggen mit Benutzername: " + event.getUsername()));
+        loginForm.addForgotPasswordListener(event -> Notification.show("Wenden Sie sich dafür bitte an Fritz Schubert.❤️"));
+        loginForm.addLoginListener(event -> logger.info("User versuchte sich einzuloggen mit Benutzername: " + event.getUsername()));
         loginForm.setI18n(i18n);
 
         add(

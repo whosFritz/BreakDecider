@@ -1,9 +1,8 @@
 package com.whosfritz.breakdecider.Registration;
 
-import com.whosfritz.breakdecider.Entities.AppUserRole;
-import com.whosfritz.breakdecider.Entities.BreakDeciderUser;
-import com.whosfritz.breakdecider.Repositories.BreakDeciderUserRepository;
-import com.whosfritz.breakdecider.Services.BreakDeciderUserService;
+import com.whosfritz.breakdecider.Data.Entities.AppUserRole;
+import com.whosfritz.breakdecider.Data.Entities.BreakDeciderUser;
+import com.whosfritz.breakdecider.Data.Services.BreakDeciderUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 public class RegistrationService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final BreakDeciderUserRepository breakDeciderUserRepository;
     private final BreakDeciderUserService breakDeciderUserService;
 
     public void register(RegistrationRequest request) {
@@ -26,6 +24,6 @@ public class RegistrationService {
                 AppUserRole.USER,
                 false,
                 true);
-        breakDeciderUserRepository.save(breakDeciderUser);
+        breakDeciderUserService.save(breakDeciderUser);
     }
 }
