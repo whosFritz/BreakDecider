@@ -1,4 +1,4 @@
-package com.whosfritz.breakdecider.Views;
+package com.whosfritz.breakdecider.ui.Views;
 
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;

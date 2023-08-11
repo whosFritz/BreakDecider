@@ -1,4 +1,4 @@
-package com.whosfritz.breakdecider.Views;
+package com.whosfritz.breakdecider.ui.Views;
 
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;

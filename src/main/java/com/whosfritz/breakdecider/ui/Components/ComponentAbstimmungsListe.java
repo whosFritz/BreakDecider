@@ -1,4 +1,4 @@
-package com.whosfritz.breakdecider.Components;
+package com.whosfritz.breakdecider.ui.Components;
 
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;

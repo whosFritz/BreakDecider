@@ -1,12 +1,12 @@
-package com.whosfritz.breakdecider.Views;
+package com.whosfritz.breakdecider.ui.Views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.whosfritz.breakdecider.Components.ComponentAbstimmungsListe;
 import com.whosfritz.breakdecider.Entities.Abstimmungsthema;
 import com.whosfritz.breakdecider.Services.AbstimmungsthemaService;
+import com.whosfritz.breakdecider.ui.Components.ComponentAbstimmungsListe;
 import jakarta.annotation.security.PermitAll;
 
 import java.util.ArrayList;
