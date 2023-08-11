@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 @AnonymousAllowed
 public class LoginView extends VerticalLayout implements BeforeEnterListener {
     private final LoginForm loginForm = new LoginForm();
-    Logger logger = LoggerFactory.getLogger(LoginView.class);
+    private final Logger logger = LoggerFactory.getLogger(LoginView.class);
 
 
     public LoginView() {

@@ -21,6 +21,8 @@ import com.whosfritz.breakdecider.Data.Services.AbstimmungsthemaService;
 import com.whosfritz.breakdecider.Data.Services.VotingService;
 import com.whosfritz.breakdecider.Security.SecurityService;
 import jakarta.annotation.security.PermitAll;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,22 +33,17 @@ import java.util.List;
 public class AbstimmungenView extends VerticalLayout {
     private final AbstimmungsthemaService abstimmungsthemaService;
     private final SecurityService securityService;
+    private final VotingService votingService;
+    private final Logger logger = LoggerFactory.getLogger(AbstimmungenView.class);
 
-    public AbstimmungenView(AbstimmungsthemaService abstimmungsthemaService, SecurityService securityService) {
+    public AbstimmungenView(AbstimmungsthemaService abstimmungsthemaService, SecurityService securityService, VotingService votingService) {
         this.abstimmungsthemaService = abstimmungsthemaService;
         this.securityService = securityService;
-        // Create a BreakDeciderUser instance (if not already created)
-        // Create an Abstimmungsthema instance (if not already created)
-        LocalDate date = LocalDate.now();
-        Abstimmungsthema abstimmungsthema1 = new Abstimmungsthema("John Doe", date, Status.OPEN, "Favorite Color Poll", "Vote for your favorite color.");
+        this.votingService = votingService;
 
-        // Create a Stimmzettel instance and associate it with the user
-        Stimmzettel stimmzettel1 = new Stimmzettel(Entscheidung.JA, date, securityService.getAuthenticatedUser(), abstimmungsthema1);
-        abstimmungsthema1.getStimmzettelList().add(stimmzettel1);
-        // Add the Stimmzettel instance to the Abstimmungsthema's stimmzettelList
 
         Button testButton = new Button("Test Button", event -> {
-            abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema1);
+            abstimmungsthemaService.saveAbstimmungsthema(testAbstimmungCreate());
         });
         add(new Text(securityService.getAuthenticatedUser().getUsername()));
         add(testButton);
@@ -82,13 +79,13 @@ public class AbstimmungenView extends VerticalLayout {
             dialog.setHeaderTitle("Abstimmen über Thema: " + abstimmungsthema.getTitel());
             HorizontalLayout yes_no_buttons = new HorizontalLayout();
             Button yesButton = new Button("YES", (e) -> {
-                applicateVote(Entscheidung.JA, abstimmungsthema);
+                handleInput(Entscheidung.JA, abstimmungsthema);
                 dialog.close();
             });
             yesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
                     ButtonVariant.LUMO_SUCCESS);
             Button noButton = new Button("NO", (e) -> {
-                applicateVote(Entscheidung.NEIN, abstimmungsthema);
+                handleInput(Entscheidung.NEIN, abstimmungsthema);
                 dialog.close();
             });
             noButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
@@ -97,7 +94,6 @@ public class AbstimmungenView extends VerticalLayout {
             yes_no_buttons.add(yesButton, noButton);
 
             Button cancelButton = new Button("Cancel", (e) -> {
-                System.out.println("Cancel");
                 dialog.close();
             });
             dialog.add(yes_no_buttons);
@@ -113,19 +109,32 @@ public class AbstimmungenView extends VerticalLayout {
         add(list);
     }
 
-    private void applicateVote(
+    private Abstimmungsthema testAbstimmungCreate() {
+        Abstimmungsthema var = new Abstimmungsthema("John Doe", LocalDate.now(), Status.OPEN, "Favorite Color Poll", "Vote for your favorite color.");
+        // Create a Stimmzettel instance and associate it with the user
+        Stimmzettel stimmzettel1 = new Stimmzettel(Entscheidung.JA, LocalDate.now(), securityService.getAuthenticatedUser(), var);
+        var.getStimmzettelList().add(stimmzettel1);
+        // Add the Stimmzettel instance to the Abstimmungsthema's stimmzettelList
+        return var;
+    }
+
+    private void handleInput(
             Entscheidung entscheidung,
             Abstimmungsthema abstimmungsthema
     ) {
-        VotingService votingService = new VotingService(
-                abstimmungsthemaService
-        );
         LocalDate localDate = LocalDate.now();
         if (entscheidung.equals(Entscheidung.JA)) {
-            votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
+            try {
+                votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
+            } catch (Exception e) {
+                logger.error("Fehler beim Ja-Abstimmen: " + e.getMessage());
+            }
         } else {
-            votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
-
+            try {
+                votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
+            } catch (Exception e) {
+                logger.error("Fehler beim Nein-Abstimmen: " + e.getMessage());
+            }
         }
     }
 

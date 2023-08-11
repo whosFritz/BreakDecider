@@ -9,6 +9,8 @@ import com.whosfritz.breakdecider.Data.Entities.Status;
 import com.whosfritz.breakdecider.Data.Services.VotingService;
 import com.whosfritz.breakdecider.Security.SecurityService;
 import jakarta.annotation.security.PermitAll;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 public class CreateAbstimmungView extends VerticalLayout {
     private final VotingService votingService;
     private final SecurityService securityService;
+    private final Logger logger = LoggerFactory.getLogger(CreateAbstimmungView.class);
 
     public CreateAbstimmungView(VotingService votingService, SecurityService securityService) {
         this.votingService = votingService;
@@ -35,17 +38,18 @@ public class CreateAbstimmungView extends VerticalLayout {
     public VerticalLayout createAbstimmungForm() {
         TextField titelTF = new TextField("Abstimmungstitel");
         TextField beschreibungTF = new TextField("Beschreibung");
-        Button button = new Button("Erstellen");
-        button.addClickListener(buttonClickEvent -> {
-            LocalDate localDate = LocalDate.now();
-            votingService.handleCreateAbstimmung(
-                    securityService.getAuthenticatedUser(),
-                    localDate, Status.OPEN,
-                    titelTF.getValue(),
-                    beschreibungTF.getValue());
-            System.out.println("Abstimmung erstellt");
+        Button button = new Button("Erstellen", buttonClickEvent -> {
+            try {
+                votingService.handleCreateAbstimmung(
+                        securityService.getAuthenticatedUser(),
+                        LocalDate.now(), Status.OPEN,
+                        titelTF.getValue(),
+                        beschreibungTF.getValue());
+                System.out.println("Abstimmung erstellt");
+            } catch (Exception e) {
+                logger.error("Fehler beim Erstellen der Abstimmung: " + e.getMessage());
+            }
         });
-
         VerticalLayout layout = new VerticalLayout();
         layout.addClassName("create-abstimmung-form");
         layout.setSizeFull();

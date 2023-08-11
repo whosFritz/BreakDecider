@@ -53,18 +53,6 @@ export declare class Flow {
     private baseRegex;
     private appShellTitle;
     private navigation;
-    private flowLeave;
-    private flowNavigate;
-    private getFlowRoutePath;
-    private getFlowRouteQuery;
-    private flowInit;
-    private loadScript;
-    private injectAppIdScript;
-    private flowInitClient;
-    private flowInitUi;
-    private addConnectionIndicator;
-    private offlineStubAction;
-    private isFlowClientLoaded;
 
     constructor(config?: FlowConfig);
 
@@ -79,11 +67,24 @@ export declare class Flow {
      */
     get serverSideRoutes(): [FlowRoute];
 
-    private get action();
-
     loadingStarted(): void;
 
     loadingFinished(): void;
+
+    private get action();
+
+    private flowLeave;
+    private flowNavigate;
+    private getFlowRoutePath;
+    private getFlowRouteQuery;
+    private flowInit;
+    private loadScript;
+    private injectAppIdScript;
+    private flowInitClient;
+    private flowInitUi;
+    private addConnectionIndicator;
+    private offlineStubAction;
+    private isFlowClientLoaded;
 }
 
 export {};

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component()
 public class AuthSuccessHandler implements ApplicationListener<AuthenticationSuccessEvent> {
 
-    Logger logger = LoggerFactory.getLogger(AuthSuccessHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(AuthSuccessHandler.class);
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
