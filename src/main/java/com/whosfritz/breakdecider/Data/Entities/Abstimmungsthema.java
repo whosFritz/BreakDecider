@@ -33,6 +33,7 @@ public class Abstimmungsthema {
 
     @OneToMany(mappedBy = "abstimmungsthema", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Stimmzettel> stimmzettelList;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private BreakDeciderUser user;

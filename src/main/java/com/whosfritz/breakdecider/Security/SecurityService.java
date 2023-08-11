@@ -28,11 +28,16 @@ public class SecurityService {
     }
 
     public void logout() {
-        UI.getCurrent().getPage().setLocation(LOGOUT_SUCCESS_URL);
-        SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-        logger.info("User wurde ausgeloggt: " + getAuthenticatedUser().getUsername());
-        logoutHandler.logout(
-                VaadinServletRequest.getCurrent().getHttpServletRequest(), null,
-                null);
+        try {
+            logger.info("User wurde ausgeloggt: " + getAuthenticatedUser().getUsername());
+            UI.getCurrent().getPage().setLocation(LOGOUT_SUCCESS_URL);
+            SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+            logoutHandler.logout(
+                    VaadinServletRequest.getCurrent().getHttpServletRequest(), null,
+                    null);
+        } catch (Exception e) {
+            logger.error("User konnte nicht ausgeloggt werden: " + getAuthenticatedUser().getUsername());
+        }
+
     }
 }

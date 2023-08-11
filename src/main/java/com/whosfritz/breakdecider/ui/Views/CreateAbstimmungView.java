@@ -37,7 +37,9 @@ public class CreateAbstimmungView extends VerticalLayout {
 
     public VerticalLayout createAbstimmungForm() {
         TextField titelTF = new TextField("Abstimmungstitel");
+        titelTF.setSizeFull();
         TextField beschreibungTF = new TextField("Beschreibung");
+        beschreibungTF.setSizeFull();
         Button button = new Button("Erstellen", buttonClickEvent -> {
             try {
                 votingService.handleCreateAbstimmung(
@@ -45,14 +47,17 @@ public class CreateAbstimmungView extends VerticalLayout {
                         LocalDate.now(), Status.OPEN,
                         titelTF.getValue(),
                         beschreibungTF.getValue());
-                System.out.println("Abstimmung erstellt");
+                titelTF.clear();
+                beschreibungTF.clear();
+                logger.info("User: " + securityService.getAuthenticatedUser().getUsername() + " hat eine Abstimmung erstellt");
             } catch (Exception e) {
                 logger.error("Fehler beim Erstellen der Abstimmung: " + e.getMessage());
             }
         });
         VerticalLayout layout = new VerticalLayout();
         layout.addClassName("create-abstimmung-form");
-        layout.setSizeFull();
+        layout.setMaxWidth("500px");
+        layout.setMinWidth("500px");
         layout.setAlignItems(Alignment.CENTER);
         layout.setJustifyContentMode(JustifyContentMode.CENTER);
         layout.add(
