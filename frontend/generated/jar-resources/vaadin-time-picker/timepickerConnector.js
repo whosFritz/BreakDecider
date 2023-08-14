@@ -1,12 +1,12 @@
 import {
-    TEST_PM_TIME,
     formatMilliseconds,
-    parseMillisecondsIntoInteger,
-    parseDigitsIntoInteger,
     getAmString,
     getPmString,
     getSeparator,
-    searchAmOrPmToken
+    parseDigitsIntoInteger,
+    parseMillisecondsIntoInteger,
+    searchAmOrPmToken,
+    TEST_PM_TIME
 } from './helpers.js';
 
 (function () {

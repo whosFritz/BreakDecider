@@ -1,6 +1,8 @@
 package com.whosfritz.breakdecider.ui.Views;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
@@ -13,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+
+import static com.whosfritz.breakdecider.ui.utils.showVoteNotification;
 
 
 @PermitAll
@@ -50,8 +54,10 @@ public class CreateAbstimmungView extends VerticalLayout {
                 titelTF.clear();
                 beschreibungTF.clear();
                 logger.info("User: " + securityService.getAuthenticatedUser().getUsername() + " hat eine Abstimmung erstellt");
+                showVoteNotification(Notification.Position.TOP_END, "Abstimmung erfolgreich erstellt", NotificationVariant.LUMO_SUCCESS);
             } catch (Exception e) {
                 logger.error("Fehler beim Erstellen der Abstimmung: " + e.getMessage());
+                showVoteNotification(Notification.Position.TOP_END, "Fehler beim Erstellen der Abstimmung", NotificationVariant.LUMO_ERROR);
             }
         });
         VerticalLayout layout = new VerticalLayout();
@@ -67,4 +73,5 @@ public class CreateAbstimmungView extends VerticalLayout {
         );
         return layout;
     }
+
 }

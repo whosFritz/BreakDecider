@@ -81,6 +81,7 @@ public class MainView extends AppLayout {
                 LumoUtility.Margin.Top.LARGE
         );
         layout.add(topMenu);
+
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
@@ -165,4 +166,6 @@ public class MainView extends AppLayout {
                 )
                 .findFirst().map(Tab.class::cast);
     }
+
+
 }

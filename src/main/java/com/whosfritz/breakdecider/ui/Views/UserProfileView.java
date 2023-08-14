@@ -12,10 +12,7 @@ public class UserProfileView extends VerticalLayout {
 
     //Constructor vaadin
     public UserProfileView() {
-        addClassName("user-profile-view");
-        setSizeFull();
-        setAlignItems(Alignment.CENTER);
-        setJustifyContentMode(JustifyContentMode.CENTER);
+
     }
 
 }

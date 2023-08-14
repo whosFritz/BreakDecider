@@ -17,7 +17,6 @@ public class VotingService {
         this.abstimmungsthemaService = abstimmungsthemaService;
     }
 
-
     @Transactional
     public void handleVote(Entscheidung entscheidung,
                            LocalDate localDate,
@@ -45,6 +44,7 @@ public class VotingService {
             abstimmungsthema.setBeschreibung(beschreibung);
             abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
         } catch (Exception e) {
+            logger.error("Fehler beim Erstellen der Abstimmung: " + e.getMessage());
             throw e;
         }
     }
