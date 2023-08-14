@@ -126,19 +126,19 @@ public class AbstimmungenView extends VerticalLayout {
         if (entscheidung.equals(Entscheidung.JA)) {
             try {
                 votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
-                showNotification(Notification.Position.TOP_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
+                showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
                 list.getDataProvider().refreshItem(abstimmungsthema);
             } catch (Exception e) {
-                showNotification(Notification.Position.TOP_END, "Fehler beim Ja-Abstimmen", NotificationVariant.LUMO_ERROR);
+                showNotification(Notification.Position.BOTTOM_END, "Fehler beim Ja-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Ja-Abstimmen: " + e.getMessage());
             }
         } else {
             try {
                 votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
-                showNotification(Notification.Position.TOP_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
+                showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
                 list.getDataProvider().refreshItem(abstimmungsthema);
             } catch (Exception e) {
-                showNotification(Notification.Position.TOP_END, "Fehler beim Nein-Abstimmen", NotificationVariant.LUMO_ERROR);
+                showNotification(Notification.Position.BOTTOM_END, "Fehler beim Nein-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Nein-Abstimmen: " + e.getMessage());
             }
         }

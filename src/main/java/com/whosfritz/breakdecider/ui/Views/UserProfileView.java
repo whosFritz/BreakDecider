@@ -49,7 +49,7 @@ public class UserProfileView extends VerticalLayout {
                     e.printStackTrace();
                     showNotification(Notification.Position.BOTTOM_CENTER, "Fehler beim Ändern des Passworts.", NotificationVariant.LUMO_ERROR);
                 }
-                showNotification(Notification.Position.TOP_END, "Passwort erfolgreich geändert!", NotificationVariant.LUMO_SUCCESS);
+                showNotification(Notification.Position.BOTTOM_END, "Passwort erfolgreich geändert!", NotificationVariant.LUMO_SUCCESS);
             } else {
                 // Show an error notification
                 showNotification(Notification.Position.BOTTOM_CENTER, "Die Passwörter stimmen nicht überein.", NotificationVariant.LUMO_ERROR);
