@@ -17,7 +17,6 @@ public class AbstimmungsthemaService {
         this.abstimmungsthemaRepository = abstimmungsthemaRepository;
     }
 
-
     @Transactional
     public List<Abstimmungsthema> getAllAbstimmungsthemen() {
         return abstimmungsthemaRepository.findAll();
@@ -25,27 +24,8 @@ public class AbstimmungsthemaService {
 
 
     @Transactional
-    public Abstimmungsthema getAbstimmungsthemaById(Long id) {
-        return abstimmungsthemaRepository.findById(id).orElse(null);
-    }
-
-
-    @Transactional
     public Abstimmungsthema saveAbstimmungsthema(Abstimmungsthema abstimmungsthema) {
         return abstimmungsthemaRepository.save(abstimmungsthema);
     }
-
-
-    @Transactional
-    public void deleteAbstimmungsthema(Long id) {
-        abstimmungsthemaRepository.deleteById(id);
-    }
-
-
-    @Transactional
-    public void saveAllAbstimmungsthemen(List<Abstimmungsthema> abstimmungsthemaList) {
-        abstimmungsthemaRepository.saveAll(abstimmungsthemaList);
-    }
-
     // Weitere benutzerdefinierte Methoden für die Geschäftslogik
 }

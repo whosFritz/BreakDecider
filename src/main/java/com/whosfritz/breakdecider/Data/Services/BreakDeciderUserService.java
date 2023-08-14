@@ -6,12 +6,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
 public class BreakDeciderUserService implements UserDetailsService {
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final BreakDeciderUserRepository breakDeciderUserRepository;
 
@@ -29,6 +31,11 @@ public class BreakDeciderUserService implements UserDetailsService {
 
     @Transactional
     public void save(BreakDeciderUser breakDeciderUser) {
+        breakDeciderUserRepository.save(breakDeciderUser);
+    }
+
+    public void updateUser(BreakDeciderUser breakDeciderUser, String newPassword) {
+        breakDeciderUser.setPassword(bCryptPasswordEncoder.encode(newPassword));
         breakDeciderUserRepository.save(breakDeciderUser);
     }
 }

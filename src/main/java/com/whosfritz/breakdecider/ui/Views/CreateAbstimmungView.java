@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 
-import static com.whosfritz.breakdecider.ui.utils.showVoteNotification;
+import static com.whosfritz.breakdecider.ui.utils.showNotification;
 
 
 @PermitAll
@@ -54,10 +54,10 @@ public class CreateAbstimmungView extends VerticalLayout {
                 titelTF.clear();
                 beschreibungTF.clear();
                 logger.info("User: " + securityService.getAuthenticatedUser().getUsername() + " hat eine Abstimmung erstellt");
-                showVoteNotification(Notification.Position.TOP_END, "Abstimmung erfolgreich erstellt", NotificationVariant.LUMO_SUCCESS);
+                showNotification(Notification.Position.TOP_END, "Abstimmung erfolgreich erstellt", NotificationVariant.LUMO_SUCCESS);
             } catch (Exception e) {
                 logger.error("Fehler beim Erstellen der Abstimmung: " + e.getMessage());
-                showVoteNotification(Notification.Position.TOP_END, "Fehler beim Erstellen der Abstimmung", NotificationVariant.LUMO_ERROR);
+                showNotification(Notification.Position.TOP_END, "Fehler beim Erstellen der Abstimmung", NotificationVariant.LUMO_ERROR);
             }
         });
         VerticalLayout layout = new VerticalLayout();

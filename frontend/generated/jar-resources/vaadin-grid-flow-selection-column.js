@@ -4,12 +4,6 @@ import {GridColumn} from '@vaadin/grid/src/vaadin-grid-column.js';
 {
     class GridFlowSelectionColumnElement extends GridColumn {
 
-        constructor() {
-            super();
-            this._boundOnSelectEvent = this._onSelectEvent.bind(this);
-            this._boundOnDeselectEvent = this._onDeselectEvent.bind(this);
-        }
-
         static get is() {
             return 'vaadin-grid-flow-selection-column';
         }
@@ -62,6 +56,12 @@ import {GridColumn} from '@vaadin/grid/src/vaadin-grid-column.js';
 
                 selectAllHidden: Boolean
             };
+        }
+
+        constructor() {
+            super();
+            this._boundOnSelectEvent = this._onSelectEvent.bind(this);
+            this._boundOnDeselectEvent = this._onDeselectEvent.bind(this);
         }
 
         static get observers() {

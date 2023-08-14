@@ -32,8 +32,8 @@ export class Flow {
         // Regular expression used to remove the app-context
         const elm = document.head.querySelector('base');
         this.baseRegex = new RegExp(`^${
-        // IE11 does not support document.baseURI
-        (document.baseURI || (elm && elm.href) || '/').replace(/^https?:\/\/[^/]+/i, '')}`);
+            // IE11 does not support document.baseURI
+            (document.baseURI || (elm && elm.href) || '/').replace(/^https?:\/\/[^/]+/i, '')}`);
         this.appShellTitle = document.title;
         // Put a vaadin-connection-indicator in the dom
         this.addConnectionIndicator();
@@ -55,36 +55,6 @@ export class Flow {
                 action: this.action
             }
         ];
-    }
-
-    get action() {
-        // Return a function which is bound to the flow instance, thus we can use
-        // the syntax `...serverSideRoutes` in vaadin-router.
-        return async (params) => {
-            // Store last action pathname so as we can check it in events
-            this.pathname = params.pathname;
-            if ($wnd.Vaadin.connectionState.online) {
-                try {
-                    await this.flowInit();
-                } catch (error) {
-                    if (error instanceof FlowUiInitializationError) {
-                        // error initializing Flow: assume connection lost
-                        $wnd.Vaadin.connectionState.state = ConnectionState.CONNECTION_LOST;
-                        return this.offlineStubAction();
-                    } else {
-                        throw error;
-                    }
-                }
-            } else {
-                // insert an offline stub
-                return this.offlineStubAction();
-            }
-            // When an action happens, navigation will be resolved `onBeforeEnter`
-            this.container.onBeforeEnter = (ctx, cmd) => this.flowNavigate(ctx, cmd);
-            // For covering the 'server -> client' use case
-            this.container.onBeforeLeave = (ctx, cmd) => this.flowLeave(ctx, cmd);
-            return this.container;
-        };
     }
 
     loadingStarted() {
@@ -122,8 +92,37 @@ export class Flow {
         });
     }
 
-    // Send a remote call to `JavaScriptBootstrapUI` to check
+    get action() {
+        // Return a function which is bound to the flow instance, thus we can use
+        // the syntax `...serverSideRoutes` in vaadin-router.
+        return async (params) => {
+            // Store last action pathname so as we can check it in events
+            this.pathname = params.pathname;
+            if ($wnd.Vaadin.connectionState.online) {
+                try {
+                    await this.flowInit();
+                } catch (error) {
+                    if (error instanceof FlowUiInitializationError) {
+                        // error initializing Flow: assume connection lost
+                        $wnd.Vaadin.connectionState.state = ConnectionState.CONNECTION_LOST;
+                        return this.offlineStubAction();
+                    } else {
+                        throw error;
+                    }
+                }
+            } else {
+                // insert an offline stub
+                return this.offlineStubAction();
+            }
+            // When an action happens, navigation will be resolved `onBeforeEnter`
+            this.container.onBeforeEnter = (ctx, cmd) => this.flowNavigate(ctx, cmd);
+            // For covering the 'server -> client' use case
+            this.container.onBeforeLeave = (ctx, cmd) => this.flowLeave(ctx, cmd);
+            return this.container;
+        };
+    }
 
+    // Send a remote call to `JavaScriptBootstrapUI` to check
     // whether navigation has to be cancelled.
     async flowLeave(ctx, cmd) {
         // server -> server, viewing offline stub, or browser is offline

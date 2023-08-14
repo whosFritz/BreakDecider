@@ -11,7 +11,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.whosfritz.breakdecider.Data.Entities.*;
+import com.whosfritz.breakdecider.Data.Entities.Abstimmungsthema;
+import com.whosfritz.breakdecider.Data.Entities.Entscheidung;
+import com.whosfritz.breakdecider.Data.Entities.Status;
+import com.whosfritz.breakdecider.Data.Entities.Stimmzettel;
 import com.whosfritz.breakdecider.Data.Services.AbstimmungsthemaService;
 import com.whosfritz.breakdecider.Data.Services.VotingService;
 import com.whosfritz.breakdecider.Security.SecurityService;
@@ -21,9 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-import static com.whosfritz.breakdecider.ui.utils.showVoteNotification;
+import static com.whosfritz.breakdecider.ui.utils.showNotification;
 
 @PermitAll
 @Route(value = "", layout = MainView.class)
@@ -81,21 +83,7 @@ public class AbstimmungenView extends VerticalLayout {
         // Set the items (data) for the grid
         list.setItems(abstimmungsthemenList);
 
-        // Set the selection mode to single (or multi, if you want to allow multiple selection)
-        list.setSelectionMode(Grid.SelectionMode.SINGLE);
 
-        // Add a selection listener to the grid's selection model
-        list.getSelectionModel().addSelectionListener(event -> {
-            // Get the selected item (if any)
-            Optional<Abstimmungsthema> selectedItem = event.getFirstSelectedItem();
-            if (selectedItem.isPresent()) {
-                Abstimmungsthema abstimmungsthema = selectedItem.get();
-                // If the selected item has Status.CLOSED, deselect it
-                if (abstimmungsthema.getStatus() == Status.CLOSED) {
-                    list.deselect(abstimmungsthema);
-                }
-            }
-        });
         add(list);
     }
 
@@ -138,24 +126,27 @@ public class AbstimmungenView extends VerticalLayout {
         if (entscheidung.equals(Entscheidung.JA)) {
             try {
                 votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
-                showVoteNotification(Notification.Position.TOP_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
+                showNotification(Notification.Position.TOP_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
+                list.getDataProvider().refreshItem(abstimmungsthema);
             } catch (Exception e) {
+                showNotification(Notification.Position.TOP_END, "Fehler beim Ja-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Ja-Abstimmen: " + e.getMessage());
             }
         } else {
             try {
                 votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
-                showVoteNotification(Notification.Position.TOP_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
+                showNotification(Notification.Position.TOP_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
+                list.getDataProvider().refreshItem(abstimmungsthema);
             } catch (Exception e) {
+                showNotification(Notification.Position.TOP_END, "Fehler beim Nein-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Nein-Abstimmen: " + e.getMessage());
             }
         }
-        list.getDataProvider().refreshItem(abstimmungsthema);
     }
 
     public int getYesCount(Abstimmungsthema abstimmungsthema) {
         int yesVoteCount = 0;
-        for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelList()) {
+        for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelSet()) {
             if (stimmzettel.getEntscheidung() == Entscheidung.JA) {
                 yesVoteCount++;
             }
@@ -165,29 +156,12 @@ public class AbstimmungenView extends VerticalLayout {
 
     public int getNoCount(Abstimmungsthema abstimmungsthema) {
         int yesVoteCount = 0;
-        for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelList()) {
+        for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelSet()) {
             if (stimmzettel.getEntscheidung() == Entscheidung.NEIN) {
                 yesVoteCount++;
             }
         }
         return yesVoteCount;
-    }
-
-    public boolean ableToVote(BreakDeciderUser user, Abstimmungsthema abstimmungsthema) {
-        if (user.getAbstimmungsthema() != null) {
-            if (user.getAbstimmungsthema().getStimmzettelList() != null) {
-                for (Stimmzettel stimmzettel : user.getAbstimmungsthema().getStimmzettelList()) {
-                    if (stimmzettel.getAbstimmungsthema().equals(abstimmungsthema)) {
-                        return false;
-                    }
-                }
-            } else {
-                throw new NullPointerException("User hat kein Stimmzettel");
-            }
-        } else {
-            throw new NullPointerException("User hat kein Abstimmungsthema");
-        }
-        return true;
     }
 
     private boolean enableButtons(Abstimmungsthema abstimmungsthema) {

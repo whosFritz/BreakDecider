@@ -25,7 +25,7 @@ public class VotingService {
     ) {
         try {
             Stimmzettel neuerStimmzettel = new Stimmzettel(entscheidung, localDate, authenticatedUser, abstimmungsthema);
-            abstimmungsthema.getStimmzettelList().add(neuerStimmzettel);
+            abstimmungsthema.getStimmzettelSet().add(neuerStimmzettel);
             abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
         } catch (Exception e) {
             throw e;

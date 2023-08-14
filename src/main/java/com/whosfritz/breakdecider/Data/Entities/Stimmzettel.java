@@ -12,7 +12,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-@Table(name = "stimmzettel")
+@Table(name = "stimmzettel", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"breakdecideruser_id", "abstimmungsthema_id"})
+})
 public class Stimmzettel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,11 +25,10 @@ public class Stimmzettel {
     private Entscheidung entscheidung;
     @Column(name = "stimmabgabedatum")
     private LocalDate stimmabgabedatum;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "breakdecideruser_id") // Change "user_id" to the actual column name in your table
     private BreakDeciderUser breakDeciderUser;
     @ManyToOne
-
     @JoinColumn(name = "abstimmungsthema_id")
     private Abstimmungsthema abstimmungsthema;
 
@@ -38,14 +39,6 @@ public class Stimmzettel {
         this.entscheidung = entscheidung;
         this.stimmabgabedatum = stimmabgabedatum;
         this.breakDeciderUser = breakDeciderUser;
-        this.abstimmungsthema = abstimmungsthema;
-    }
-
-    public Stimmzettel(Entscheidung entscheidung,
-                       LocalDate stimmabgabedatum,
-                       Abstimmungsthema abstimmungsthema) {
-        this.entscheidung = entscheidung;
-        this.stimmabgabedatum = stimmabgabedatum;
         this.abstimmungsthema = abstimmungsthema;
     }
 }

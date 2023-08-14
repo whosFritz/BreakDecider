@@ -36,10 +36,6 @@ public class BreakDeciderUser implements UserDetails {
     @Column(name = "enabled")
     private Boolean enabled;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Abstimmungsthema abstimmungsthema;
-
-
     public BreakDeciderUser(String username,
                             String password,
                             AppUserRole appUserRole,

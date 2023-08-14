@@ -1,18 +1,18 @@
 package com.whosfritz.breakdecider.Data.Entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Table(name = "abstimmungsthema")
 public class Abstimmungsthema {
     @Id
@@ -32,23 +32,7 @@ public class Abstimmungsthema {
     private String beschreibung;
 
     @OneToMany(mappedBy = "abstimmungsthema", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Stimmzettel> stimmzettelList;
+    private Set<Stimmzettel> stimmzettelSet = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private BreakDeciderUser user;
-
-    public Abstimmungsthema(String ersteller,
-                            LocalDate erstelldatum,
-                            Status status,
-                            String titel,
-                            String beschreibung) {
-        this.ersteller = ersteller;
-        this.erstelldatum = erstelldatum;
-        this.status = status;
-        this.titel = titel;
-        this.beschreibung = beschreibung;
-        this.stimmzettelList = new ArrayList<>(); // Initialize the list
-    }
 
 }
