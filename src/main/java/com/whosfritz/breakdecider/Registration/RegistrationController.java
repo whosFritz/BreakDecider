@@ -27,7 +27,7 @@ public class RegistrationController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        logger.info("User registered successfully");
+        logger.info("The following user was registered: " + request.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
 

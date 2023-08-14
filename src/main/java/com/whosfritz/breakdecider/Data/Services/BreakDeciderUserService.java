@@ -34,8 +34,14 @@ public class BreakDeciderUserService implements UserDetailsService {
         breakDeciderUserRepository.save(breakDeciderUser);
     }
 
-    public void updateUser(BreakDeciderUser breakDeciderUser, String newPassword) {
-        breakDeciderUser.setPassword(bCryptPasswordEncoder.encode(newPassword));
+    public void updateUser(BreakDeciderUser breakDeciderUser, String oldPassword, String newPassword) {
+        if (!bCryptPasswordEncoder.matches(oldPassword, breakDeciderUser.getPassword())) {
+            throw new IllegalArgumentException("Das alte Passwort ist nicht korrekt.");
+        }
+        if ()
+
+            breakDeciderUser.
+                    breakDeciderUser.setPassword(bCryptPasswordEncoder.encode(newPassword));
         breakDeciderUserRepository.save(breakDeciderUser);
     }
 }

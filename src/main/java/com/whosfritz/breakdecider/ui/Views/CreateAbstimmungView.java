@@ -41,24 +41,34 @@ public class CreateAbstimmungView extends VerticalLayout {
 
     public VerticalLayout createAbstimmungForm() {
         TextField titelTF = new TextField("Abstimmungstitel");
+        titelTF.setRequiredIndicatorVisible(true);
         titelTF.setSizeFull();
+        titelTF.setPlaceholder("Urlaubsbilder in der Cloud");
         TextField beschreibungTF = new TextField("Beschreibung");
         beschreibungTF.setSizeFull();
+        beschreibungTF.setRequiredIndicatorVisible(true);
+        beschreibungTF.setPlaceholder("Sind Urlaubsbilder in der Cloud sicher?");
         Button button = new Button("Erstellen", buttonClickEvent -> {
-            try {
-                votingService.handleCreateAbstimmung(
-                        securityService.getAuthenticatedUser(),
-                        LocalDate.now(), Status.OPEN,
-                        titelTF.getValue(),
-                        beschreibungTF.getValue());
-                titelTF.clear();
-                beschreibungTF.clear();
-                logger.info("User: " + securityService.getAuthenticatedUser().getUsername() + " hat eine Abstimmung erstellt");
-                showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich erstellt", NotificationVariant.LUMO_SUCCESS);
-            } catch (Exception e) {
-                logger.error("Fehler beim Erstellen der Abstimmung: " + e.getMessage());
-                showNotification(Notification.Position.BOTTOM_END, "Fehler beim Erstellen der Abstimmung", NotificationVariant.LUMO_ERROR);
+            if (!titelTF.isEmpty() && !beschreibungTF.isEmpty()) {
+                try {
+                    votingService.handleCreateAbstimmung(
+                            securityService.getAuthenticatedUser(),
+                            LocalDate.now(), Status.OPEN,
+                            titelTF.getValue(),
+                            beschreibungTF.getValue());
+                    titelTF.clear();
+                    beschreibungTF.clear();
+                    logger.info("User: " + securityService.getAuthenticatedUser().getUsername() + " hat eine Abstimmung erstellt");
+                    showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich erstellt", NotificationVariant.LUMO_SUCCESS);
+                } catch (Exception e) {
+                    logger.error("Fehler beim Erstellen der Abstimmung: " + e.getMessage());
+                    showNotification(Notification.Position.BOTTOM_END, "Fehler beim Erstellen der Abstimmung", NotificationVariant.LUMO_ERROR);
+                }
+            } else {
+                logger.error("Fehler beim Erstellen der Abstimmung: Titel oder Beschreibung leer. User: " + securityService.getAuthenticatedUser().getUsername());
+                showNotification(Notification.Position.BOTTOM_END, "Bitte vollständig ausfüllen.", NotificationVariant.LUMO_ERROR);
             }
+
         });
         VerticalLayout layout = new VerticalLayout();
         layout.addClassName("create-abstimmung-form");
