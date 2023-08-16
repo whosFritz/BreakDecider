@@ -63,25 +63,22 @@ public class UserProfileView extends VerticalLayout {
     private void pressUpdateButton(BreakDeciderUser breakDeciderUser, String oldPasswordString, String newPasswordString) {
         try {
             breakDeciderUserService.updateUser(breakDeciderUser, oldPasswordString, newPasswordString);
-            logger.info("Password of user: " + breakDeciderUser.getUsername() + " successfully updated.");
+            logger.info("Password von Benutzer: " + breakDeciderUser.getUsername() + " erfolgreich aktualisiert.");
             showNotification(Notification.Position.BOTTOM_END, "Passwort erfolgreich geändert!", NotificationVariant.LUMO_SUCCESS);
         } catch (NewEqualsOldPasswordException e) {
-            logger.error("New password is the same as the old password of user: " + breakDeciderUser.getUsername());
+            logger.error("Neue Password entspricht dem alten Password von " + breakDeciderUser.getUsername());
             showNotification(Notification.Position.BOTTOM_CENTER, "Das neue Passwort darf nicht das alte Passwort sein.", NotificationVariant.LUMO_ERROR);
         } catch (PasswordIncorrectException e) {
-            logger.error("Old password is incorrect of user: " + breakDeciderUser.getUsername());
+            logger.error("Alte Password ist falsch von: " + breakDeciderUser.getUsername());
             showNotification(Notification.Position.BOTTOM_CENTER, "Falsches Password.", NotificationVariant.LUMO_ERROR);
         } catch (UsernameNotFoundException e) {
-            logger.error("User not found: " + breakDeciderUser.getUsername(), e);
+            logger.error("Benutzer nicht gefunden: " + breakDeciderUser.getUsername(), e);
             showNotification(Notification.Position.BOTTOM_CENTER, "Benutzer nicht gefunden.", NotificationVariant.LUMO_ERROR);
-        } catch (IllegalArgumentException e) {
-            logger.error("New password is invalid of user: " + breakDeciderUser.getUsername());
-            showNotification(Notification.Position.BOTTOM_CENTER, "Das neue Passwort ist ungültig.", NotificationVariant.LUMO_ERROR);
         } catch (NullPointerException e) {
-            logger.error("New password is null of user: " + breakDeciderUser.getUsername());
+            logger.error("Neue Passwort ist null von Benutzer: " + breakDeciderUser.getUsername());
             showNotification(Notification.Position.BOTTOM_CENTER, "Das neue Passwort darf nicht leer sein.", NotificationVariant.LUMO_ERROR);
         } catch (Exception e) {
-            logger.error("Error while updating password of user: " + breakDeciderUser.getUsername());
+            logger.error("Fehler beim Passwort aktualisieren von Benutzer: " + breakDeciderUser.getUsername());
             showNotification(Notification.Position.BOTTOM_CENTER, "Fehler beim Ändern des Passworts.", NotificationVariant.LUMO_ERROR);
         }
     }

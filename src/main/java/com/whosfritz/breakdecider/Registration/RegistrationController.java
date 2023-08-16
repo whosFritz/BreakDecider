@@ -6,7 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpServerErrorException;
 
 
@@ -29,26 +32,20 @@ public class RegistrationController {
             logger.error("Benutzername bereits vergeben");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (HttpServerErrorException.InternalServerError e) {
-            logger.error("An InternalServerError occurred while registering a user");
+            logger.error("Ein HttpServerErrorException.InternalServerError trat auf beim Registrieren eines Benutzers");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (DataIntegrityViolationException e) {
-            logger.error("An DataIntegrityViolationException occurred while registering a user");
+            logger.error("Ein DataIntegrityViolationException trat auf beim Registrieren eines Benutzers");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (InvalidTokenException e) {
-            logger.error("An InvalidTokenException occurred while registering a user");
+            logger.error("Ein InvalidTokenException trat auf beim Registrieren eines Benutzers");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            logger.error("An error occurred while registering a user");
+            logger.error("Ein Fehler trat auf beim Registrieren eines Benutzers");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        logger.info("The following user was registered: " + request.getUsername());
-        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
-    }
-
-
-    @GetMapping(path = "/test")
-    public String confirm() {
-        return "test";
+        logger.info("Der folgende Benutzer: " + request.getUsername() + "wurde erfolgreich registriert");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Benutzer " + request.getUsername() + " wurde erfolgreich registriert");
     }
 
 }

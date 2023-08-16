@@ -101,7 +101,7 @@ public class AdminPanelView extends VerticalLayout {
                 logger.error("Benutzer: " + username + " existiert schon.");
             } catch (Exception e) {
                 showNotification(Notification.Position.BOTTOM_END, "Irgendwas lief schief", NotificationVariant.LUMO_ERROR);
-                logger.error("Error while creating user: " + e.getMessage());
+                logger.error("Fehler beim Erstellen von Benutzer: " + e.getMessage());
             }
         } else {
             showNotification(Notification.Position.BOTTOM_END, "Bitte alle Felder ausfüllen", NotificationVariant.LUMO_ERROR);
