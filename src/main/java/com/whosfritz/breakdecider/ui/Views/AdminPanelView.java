@@ -63,6 +63,14 @@ public class AdminPanelView extends VerticalLayout {
         grid.getColumnByKey("locked").setHeader("Zugang gesperrt").setSortable(true);
         grid.getColumnByKey("enabled").setHeader("Freigeschaltet").setSortable(true);
         grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.addItemClickListener(event -> {
+            if (grid.getSelectedItems().contains(event.getItem())) {
+                grid.deselect(event.getItem());
+            } else {
+                grid.select(event.getItem());
+            }
+        });
+
 
         Button deleteUsersButton = new Button("Benutzer löschen");
         deleteUsersButton.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY);
@@ -104,6 +112,9 @@ public class AdminPanelView extends VerticalLayout {
             breakDeciderUserService.deleteUserWithStimmzettel(breakDeciderUser.getId());
             showNotification(Notification.Position.BOTTOM_END, "Ausgewählte Benutzer gelöscht", NotificationVariant.LUMO_SUCCESS);
             logger.info("Benutzer: " + breakDeciderUser.getUsername() + " gelöscht.");
+        } catch (NullPointerException exception) {
+            showNotification(Notification.Position.BOTTOM_END, "Benutzer konnte nicht gelöscht werden", NotificationVariant.LUMO_ERROR);
+            logger.error("Benutzer konnte nicht gelöscht werden: " + exception);
         } catch (DataIntegrityViolationException e) {
             showNotification(Notification.Position.BOTTOM_END, "User konnte SQL mäßig nicht gelöscht werden", NotificationVariant.LUMO_ERROR);
             logger.error("Benutzer konnte nicht gelöscht werden: " + e);

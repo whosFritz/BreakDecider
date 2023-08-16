@@ -1,15 +1,15 @@
 package com.whosfritz.breakdecider.Data.Entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @Table(name = "stimmzettel", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"breakdecideruser_id", "abstimmungsthema_id"})
@@ -35,13 +35,10 @@ public class Stimmzettel {
     @JoinColumn(name = "abstimmungsthema_id")
     private Abstimmungsthema abstimmungsthema;
 
-    public Stimmzettel(Entscheidung entscheidung,
-                       LocalDate stimmabgabedatum,
-                       BreakDeciderUser breakDeciderUser,
-                       Abstimmungsthema abstimmungsthema) {
-        this.entscheidung = entscheidung;
-        this.stimmabgabedatum = stimmabgabedatum;
-        this.breakDeciderUser = breakDeciderUser;
-        this.abstimmungsthema = abstimmungsthema;
+
+    @Override
+    public String toString() {
+        return "Stimmzettel(id=" + id + ", entscheidung=" + entscheidung + ")";
     }
+
 }

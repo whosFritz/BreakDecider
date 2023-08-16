@@ -1,5 +1,6 @@
 package com.whosfritz.breakdecider.Data.Services;
 
+import com.whosfritz.breakdecider.Data.Entities.Abstimmungsthema;
 import com.whosfritz.breakdecider.Data.Entities.BreakDeciderUser;
 import com.whosfritz.breakdecider.Data.Entities.Stimmzettel;
 import com.whosfritz.breakdecider.Data.Repositories.BreakDeciderUserRepository;
@@ -33,12 +34,26 @@ public class BreakDeciderUserService implements UserDetailsService {
     public void deleteUserWithStimmzettel(Long userId) {
         try {
             List<Stimmzettel> stimmzettelList = stimmzettelService.getAllStimmzettelByUserId(userId);
-            System.out.println(stimmzettelList);
+
             for (Stimmzettel stimmzettel : stimmzettelList) {
-                stimmzettelService.deleteStimmzettel(stimmzettel);
+                // Remove from Abstimmungsthema
+                Abstimmungsthema abstimmungsthema = stimmzettel.getAbstimmungsthema();
+                if (abstimmungsthema != null) {
+                    abstimmungsthema.getStimmzettelSet().remove(stimmzettel);
+                } else {
+                    throw new NullPointerException("Stimmzettel " + stimmzettel.getId() + " hat kein Abstimmungsthema");
+                }
+
+                // Delete Stimmzettel by ID
+                stimmzettelService.deleteStimmzettelById(stimmzettel.getId());
             }
+
+            // After deleting associated Stimmzettel, delete the user
             breakDeciderUserRepository.deleteById(userId);
+        } catch (NullPointerException nullPointerException) {
+            throw nullPointerException;
         } catch (Exception e) {
+            System.out.println(e);
             throw e;
         }
     }
@@ -50,21 +65,25 @@ public class BreakDeciderUserService implements UserDetailsService {
     }
 
 
+    @Transactional
     public List<BreakDeciderUser> getAllUsers() {
         return breakDeciderUserRepository.findAll();
     }
 
+    @Transactional
     public void save(BreakDeciderUser breakDeciderUser) {
         breakDeciderUserRepository.save(breakDeciderUser);
     }
 
 
     // function to get user by username
+    @Transactional
     public BreakDeciderUser getUserByUsername(String username) {
         return breakDeciderUserRepository.findByUsername(username).orElseThrow(()
                 -> new UsernameNotFoundException("User " + username + " not found"));
     }
 
+    @Transactional
     public void updateUser(BreakDeciderUser breakDeciderUser, String oldPasswordString, String newPasswordString) {
         if (!bCryptPasswordEncoder.matches(oldPasswordString, breakDeciderUser.getPassword())) {
             throw new PasswordIncorrectException("Das alte Passwort ist nicht korrekt.");

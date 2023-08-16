@@ -2,13 +2,18 @@ package com.whosfritz.breakdecider.Data.Entities;
 
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -16,7 +21,6 @@ import java.util.Collections;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Table(name = "users")
-@ToString
 public class BreakDeciderUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,6 +37,9 @@ public class BreakDeciderUser implements UserDetails {
     private Boolean locked;
     @Column(name = "enabled")
     private Boolean enabled;
+    @OneToMany(mappedBy = "breakDeciderUser", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    private Set<Stimmzettel> stimmzettelSet = new HashSet<>();
+
 
     public BreakDeciderUser(String username,
                             String password,
@@ -82,4 +89,10 @@ public class BreakDeciderUser implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+
+    @Override
+    public String toString() {
+        return "BreakDeciderUser(id=" + id + ", username=" + username + ")";
+    }
+
 }
