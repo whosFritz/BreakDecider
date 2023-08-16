@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import static com.whosfritz.breakdecider.Registration.SecretRegistrationToken.REGISTRATION_TOKEN;
 import static com.whosfritz.breakdecider.ui.utils.showNotification;
 
 @RolesAllowed("ROLE_ADMIN")
@@ -88,7 +89,7 @@ public class AdminPanelView extends VerticalLayout {
 
         if (username != null && password != null && appUserRole != null) {
             try {
-                registrationService.register(new RegistrationRequest(username, password, appUserRole));
+                registrationService.register(new RegistrationRequest(username, password, appUserRole, REGISTRATION_TOKEN));
                 usernameTF.clear();
                 passwordPF.clear();
                 appUserRoleCB.clear();

@@ -1,5 +1,6 @@
 package com.whosfritz.breakdecider.Registration;
 
+import com.whosfritz.breakdecider.Exception.InvalidTokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,6 +34,9 @@ public class RegistrationController {
         } catch (DataIntegrityViolationException e) {
             logger.error("An DataIntegrityViolationException occurred while registering a user");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (InvalidTokenException e) {
+            logger.error("An InvalidTokenException occurred while registering a user");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             logger.error("An error occurred while registering a user");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
