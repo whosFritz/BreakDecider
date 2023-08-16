@@ -36,8 +36,12 @@ public class StimmzettelService {
 
 
     @Transactional
-    public void deleteStimmzettel(Long id) {
-        stimmzettelRepository.deleteById(id);
+    public void deleteStimmzettel(Stimmzettel stimmzettel) {
+        stimmzettelRepository.delete(stimmzettel);
+    }
+
+    public List<Stimmzettel> getAllStimmzettelByUserId(Long userId) {
+        return stimmzettelRepository.findAllByBreakDeciderUser_Id(userId);
     }
 
     // Weitere benutzerdefinierte Methoden für die Geschäftslogik

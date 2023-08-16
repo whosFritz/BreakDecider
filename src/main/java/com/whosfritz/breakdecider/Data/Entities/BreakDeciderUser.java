@@ -2,10 +2,7 @@ package com.whosfritz.breakdecider.Data.Entities;
 
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,17 +16,18 @@ import java.util.Collections;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Table(name = "users")
+@ToString
 public class BreakDeciderUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "users_id")
     private Long id;
-    @Column(name = "username")
+    @Column(name = "username", nullable = false)
     private String username;
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
     @Enumerated(EnumType.STRING)
-    @Column(name = "app_user_role")
+    @Column(name = "app_user_role", nullable = false)
     private AppUserRole appUserRole;
     @Column(name = "locked")
     private Boolean locked;

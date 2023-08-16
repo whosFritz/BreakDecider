@@ -23,8 +23,8 @@ public class SecurityService {
         if (principal instanceof UserDetails) {
             return (BreakDeciderUser) context.getAuthentication().getPrincipal();
         }
-        // Anonymous or no authentication.
-        return null;
+        logger.error("User konnte nicht ermittelt werden");
+        throw new RuntimeException("User konnte nicht ermittelt werden");
     }
 
     public void logout() {
@@ -39,5 +39,9 @@ public class SecurityService {
             logger.error("User konnte nicht ausgeloggt werden: " + getAuthenticatedUser().getUsername());
         }
 
+    }
+
+    public boolean isUserLoggedIn() {
+        return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
     }
 }

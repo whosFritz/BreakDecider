@@ -61,7 +61,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
                 .getQueryParameters()
                 .getParameters()
                 .containsKey("error")) {
-            loginForm.setError(false);
+            loginForm.setError(true);
         }
     }
 }

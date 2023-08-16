@@ -24,11 +24,22 @@ public class VotingService {
                            Abstimmungsthema abstimmungsthema
     ) {
         try {
+            checkIfAlreadyVoted(authenticatedUser, abstimmungsthema);
             Stimmzettel neuerStimmzettel = new Stimmzettel(entscheidung, localDate, authenticatedUser, abstimmungsthema);
             abstimmungsthema.getStimmzettelSet().add(neuerStimmzettel);
             abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
+        } catch (IllegalStateException e) {
+            throw e;
         } catch (Exception e) {
             throw e;
+        }
+    }
+
+    private void checkIfAlreadyVoted(BreakDeciderUser authenticatedUser, Abstimmungsthema abstimmungsthema) {
+        for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelSet()) {
+            if (stimmzettel.getBreakDeciderUser().getUsername().equals(authenticatedUser.getUsername())) {
+                throw new IllegalStateException("User hat bereits abgestimmt");
+            }
         }
     }
 

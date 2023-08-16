@@ -1,5 +1,6 @@
 package com.whosfritz.breakdecider.ui.Views;
 
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -30,46 +31,57 @@ public class CreateAbstimmungView extends VerticalLayout {
     public CreateAbstimmungView(VotingService votingService, SecurityService securityService) {
         this.votingService = votingService;
         this.securityService = securityService;
-        addClassName("create-abstimmung-view");
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
-        add(
-                createAbstimmungForm()
-        );
+        add(createAbstimmungForm());
     }
 
-    public VerticalLayout createAbstimmungForm() {
+    private VerticalLayout createAbstimmungForm() {
         TextField titelTF = new TextField("Abstimmungstitel");
         titelTF.setRequiredIndicatorVisible(true);
-        titelTF.setSizeFull();
+        titelTF.setWidth("200%");
+        titelTF.setHeight("200%");
         titelTF.setPlaceholder("Urlaubsbilder in der Cloud");
         TextField beschreibungTF = new TextField("Beschreibung");
-        beschreibungTF.setSizeFull();
+        beschreibungTF.setWidth("200%");
+        beschreibungTF.setHeight("200%");
         beschreibungTF.setRequiredIndicatorVisible(true);
         beschreibungTF.setPlaceholder("Sind Urlaubsbilder in der Cloud sicher?");
-        Button button = new Button("Erstellen", buttonClickEvent -> {
-            if (!titelTF.isEmpty() && !beschreibungTF.isEmpty()) {
-                try {
-                    votingService.handleCreateAbstimmung(
-                            securityService.getAuthenticatedUser(),
-                            LocalDate.now(), Status.OPEN,
-                            titelTF.getValue(),
-                            beschreibungTF.getValue());
-                    titelTF.clear();
-                    beschreibungTF.clear();
-                    logger.info("User: " + securityService.getAuthenticatedUser().getUsername() + " hat eine Abstimmung erstellt");
-                    showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich erstellt", NotificationVariant.LUMO_SUCCESS);
-                } catch (Exception e) {
-                    logger.error("Fehler beim Erstellen der Abstimmung: " + e.getMessage());
-                    showNotification(Notification.Position.BOTTOM_END, "Fehler beim Erstellen der Abstimmung", NotificationVariant.LUMO_ERROR);
-                }
-            } else {
-                logger.error("Fehler beim Erstellen der Abstimmung: Titel oder Beschreibung leer. User: " + securityService.getAuthenticatedUser().getUsername());
-                showNotification(Notification.Position.BOTTOM_END, "Bitte vollständig ausfüllen.", NotificationVariant.LUMO_ERROR);
+        Button createButton = new Button("Erstellen");
+        createButton.addClickListener(buttonClickEvent -> {
+            // check if fields are not empty
+            if (titelTF.getValue().isEmpty() || beschreibungTF.getValue().isEmpty()) {
+                showNotification(Notification.Position.BOTTOM_END, "Bitte alle Felder ausfüllen", NotificationVariant.LUMO_ERROR);
+                return;
+            }
+            // check if user is logged in
+            if (!securityService.isUserLoggedIn()) {
+                showNotification(Notification.Position.BOTTOM_END, "Bitte einloggen", NotificationVariant.LUMO_ERROR);
+                return;
+            }
+            // create voting
+            try {
+                votingService.handleCreateAbstimmung(
+                        securityService.getAuthenticatedUser(),
+                        LocalDate.now(),
+                        Status.OPEN,
+                        titelTF.getValue(),
+                        beschreibungTF.getValue());
+                titelTF.clear();
+                beschreibungTF.clear();
+                logger.info("User: " + securityService.getAuthenticatedUser().getUsername() + " hat eine Abstimmung erstellt mit Titel: " + titelTF.getValue());
+                showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich erstellt", NotificationVariant.LUMO_SUCCESS);
+            } catch (Exception e) {
+                logger.error("Error creating voting", e);
+                showNotification(Notification.Position.BOTTOM_END, "Fehler beim Erstellen der Abstimmung", NotificationVariant.LUMO_ERROR);
             }
 
+
         });
+        createButton.addClickShortcut(Key.ENTER);
+
+
         VerticalLayout layout = new VerticalLayout();
         layout.addClassName("create-abstimmung-form");
         layout.setMaxWidth("500px");
@@ -79,7 +91,7 @@ public class CreateAbstimmungView extends VerticalLayout {
         layout.add(
                 titelTF,
                 beschreibungTF,
-                button
+                createButton
         );
         return layout;
     }

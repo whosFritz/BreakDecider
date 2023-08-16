@@ -1,6 +1,5 @@
 package com.whosfritz.breakdecider.Data.Entities;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,14 +19,18 @@ public class Stimmzettel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "stimmzettel_id")
     private Long id;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "auswahl")
     private Entscheidung entscheidung;
+
     @Column(name = "stimmabgabedatum")
     private LocalDate stimmabgabedatum;
-    @ManyToOne
-    @JoinColumn(name = "breakdecideruser_id") // Change "user_id" to the actual column name in your table
+
+    @ManyToOne()
+    @JoinColumn(name = "breakdecideruser_id")
     private BreakDeciderUser breakDeciderUser;
+
     @ManyToOne
     @JoinColumn(name = "abstimmungsthema_id")
     private Abstimmungsthema abstimmungsthema;

@@ -19,15 +19,12 @@ import com.vaadin.flow.component.tabs.TabsVariant;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import com.whosfritz.breakdecider.Security.SecurityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 public class MainView extends AppLayout {
     private final SecurityService securityService;
     private final Tabs menu;
-    Logger logger = LoggerFactory.getLogger(MainView.class);
 
     public MainView(SecurityService securityService) {
         this.securityService = securityService;
@@ -48,7 +45,7 @@ public class MainView extends AppLayout {
      */
     private static Tab createTab(String text, VaadinIcon icon, Class<? extends Component> navigationTarget) {
         final Tab tab = new Tab();
-        RouterLink routerLink = new RouterLink();
+
         Div linkContent = new Div();
         linkContent.addClassName("link-content");
 
@@ -56,7 +53,7 @@ public class MainView extends AppLayout {
         linkIcon.setSize("1.5em");
         linkContent.add(linkIcon);
 
-
+        RouterLink routerLink = new RouterLink();
         routerLink.add(linkContent);
         routerLink.add(text);
         routerLink.setRoute(navigationTarget);
@@ -114,8 +111,8 @@ public class MainView extends AppLayout {
 
     private Tab[] createMenuItems() {
         return new Tab[]{
-                createTab("Abstimmung erstellen", VaadinIcon.PLUS, CreateAbstimmungView.class),
                 createTab("Jetzt Abstimmen", VaadinIcon.CHECK, AbstimmungenView.class),
+                createTab("Abstimmung erstellen", VaadinIcon.PLUS, CreateAbstimmungView.class),
                 createTab("Dein Profil", VaadinIcon.USER, UserProfileView.class),
         };
     }

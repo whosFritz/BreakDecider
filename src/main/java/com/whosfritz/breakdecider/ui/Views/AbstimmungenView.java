@@ -51,10 +51,10 @@ public class AbstimmungenView extends VerticalLayout {
         list.getColumnByKey("titel").setHeader("Titel").setSortable(true);
         list.getColumnByKey("beschreibung").setHeader("Beschreibung").setSortable(true);
         // Add a custom column for the "Yes" count
-        list.addColumn(abstimmungsthema -> getYesCount(abstimmungsthema))
+        list.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.JA))
                 .setHeader("Ja");
         // Add a custom column for the "No" count
-        list.addColumn(abstimmungsthema -> getNoCount(abstimmungsthema))
+        list.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.NEIN))
                 .setHeader("Nein");
         // Add a custom column for the "Yes" button
         list.addComponentColumn(abstimmungsthema -> {
@@ -128,6 +128,9 @@ public class AbstimmungenView extends VerticalLayout {
                 votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
                 list.getDataProvider().refreshItem(abstimmungsthema);
+            } catch (IllegalStateException e) {
+                showNotification(Notification.Position.BOTTOM_END, "Du hast bereits abgestimmt", NotificationVariant.LUMO_ERROR);
+                logger.error("Fehler beim Ja-Abstimmen: " + e.getMessage());
             } catch (Exception e) {
                 showNotification(Notification.Position.BOTTOM_END, "Fehler beim Ja-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Ja-Abstimmen: " + e.getMessage());
@@ -137,6 +140,9 @@ public class AbstimmungenView extends VerticalLayout {
                 votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
                 list.getDataProvider().refreshItem(abstimmungsthema);
+            } catch (IllegalStateException e) {
+                showNotification(Notification.Position.BOTTOM_END, "Du hast bereits abgestimmt", NotificationVariant.LUMO_ERROR);
+                logger.error("Fehler beim Nein-Abstimmen: " + e.getMessage());
             } catch (Exception e) {
                 showNotification(Notification.Position.BOTTOM_END, "Fehler beim Nein-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Nein-Abstimmen: " + e.getMessage());
@@ -144,24 +150,15 @@ public class AbstimmungenView extends VerticalLayout {
         }
     }
 
-    public int getYesCount(Abstimmungsthema abstimmungsthema) {
-        int yesVoteCount = 0;
+    public int countVotes(Abstimmungsthema abstimmungsthema, Entscheidung entscheidung) {
+        int voteCount = 0;
         for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelSet()) {
-            if (stimmzettel.getEntscheidung() == Entscheidung.JA) {
-                yesVoteCount++;
+            if (stimmzettel.getEntscheidung() == entscheidung) {
+                voteCount++;
             }
         }
-        return yesVoteCount;
-    }
+        return voteCount;
 
-    public int getNoCount(Abstimmungsthema abstimmungsthema) {
-        int yesVoteCount = 0;
-        for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelSet()) {
-            if (stimmzettel.getEntscheidung() == Entscheidung.NEIN) {
-                yesVoteCount++;
-            }
-        }
-        return yesVoteCount;
     }
 
     private boolean enableButtons(Abstimmungsthema abstimmungsthema) {

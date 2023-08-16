@@ -1,6 +1,6 @@
 package com.whosfritz.breakdecider.Data.Entities;
 
 public enum AppUserRole {
-    USER,
-    ADMIN
+    ROLE_USER,
+    ROLE_ADMIN
 }

@@ -4,6 +4,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.StreamResource;
+import com.whosfritz.breakdecider.Security.SecurityService;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
@@ -18,6 +19,11 @@ import jakarta.servlet.http.HttpServletResponse;
 @ParentLayout(MainView.class)
 public class Code404View
         extends RouteNotFoundError {
+    private final SecurityService securityService;
+
+    public Code404View(SecurityService securityService) {
+        this.securityService = securityService;
+    }
 
     @Override
     public int setErrorParameter(BeforeEnterEvent event,
