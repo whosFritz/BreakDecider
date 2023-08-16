@@ -1,6 +1,5 @@
 package com.whosfritz.breakdecider.ui.Views;
 
-import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
@@ -44,7 +43,6 @@ public class UserProfileView extends VerticalLayout {
         formLayout.addFormItem(submitButton, "Passwort ändern");
 
 
-        submitButton.addClickShortcut(Key.ENTER);
         submitButton.addClickListener(event -> {
             String oldPasswordString = oldPasswordField.getValue();
             String newPassword = newPasswordField.getValue();
@@ -59,7 +57,6 @@ public class UserProfileView extends VerticalLayout {
                 showNotification(Notification.Position.BOTTOM_CENTER, "Die Passwörter stimmen nicht überein.", NotificationVariant.LUMO_ERROR);
             }
         });
-        submitButton.addClickShortcut(Key.ENTER);
         add(formLayout);
     }
 

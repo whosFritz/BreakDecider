@@ -38,3 +38,4 @@ build/
 /src/main/resources/application-prod.properties
 /frontend/themes/break-decider/theme-editor.css
 /src/main/java/com/whosfritz/breakdecider/Registration/SecretRegistrationToken.java
+/frontend/generated/

@@ -57,24 +57,27 @@ public class AbstimmungenView extends VerticalLayout {
         list.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.NEIN))
                 .setHeader("Nein");
         // Add a custom column for the "Yes" button
+        // show 2 buttons in one column (yes and no)
+
+
         list.addComponentColumn(abstimmungsthema -> {
+            HorizontalLayout layout = new HorizontalLayout();
             Button yesButton = new Button("Ja", event -> {
                 handleInput(Entscheidung.JA, abstimmungsthema);
             });
             yesButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY);
             yesButton.setEnabled(enableButtons(abstimmungsthema));
-            return yesButton;
-        }).setHeader("Ja");
+            layout.add(yesButton);
 
-        // Add a custom column for the "No" button
-        list.addComponentColumn(abstimmungsthema -> {
             Button noButton = new Button("Nein", event -> {
                 handleInput(Entscheidung.NEIN, abstimmungsthema);
             });
             noButton.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY);
             noButton.setEnabled(enableButtons(abstimmungsthema));
-            return noButton;
-        }).setHeader("Nein");
+            layout.add(noButton);
+
+            return layout;
+        }).setHeader("Abstimmen");
 
 
         list.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));

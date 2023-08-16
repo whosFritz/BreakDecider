@@ -1,6 +1,5 @@
 package com.whosfritz.breakdecider.ui.Views;
 
-import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -79,7 +78,6 @@ public class CreateAbstimmungView extends VerticalLayout {
 
 
         });
-        createButton.addClickShortcut(Key.ENTER);
 
 
         VerticalLayout layout = new VerticalLayout();
