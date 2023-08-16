@@ -33,6 +33,7 @@ public class BreakDeciderUserService implements UserDetailsService {
     public void deleteUserWithStimmzettel(Long userId) {
         try {
             List<Stimmzettel> stimmzettelList = stimmzettelService.getAllStimmzettelByUserId(userId);
+            System.out.println(stimmzettelList);
             for (Stimmzettel stimmzettel : stimmzettelList) {
                 stimmzettelService.deleteStimmzettel(stimmzettel);
             }

@@ -86,10 +86,10 @@ public class AdminPanelView extends VerticalLayout {
                 appUserRoleCB.clear();
                 grid.setItems(breakDeciderUserService.getAllUsers());
                 showNotification(Notification.Position.BOTTOM_END, "Benutzer erstellt", NotificationVariant.LUMO_SUCCESS);
-                logger.info("User: " + username + " created");
+                logger.info("Benutzer: " + username + " erstellt.");
             } catch (IllegalStateException e) {
                 showNotification(Notification.Position.BOTTOM_END, "Dieser Benutzername existiert schon", NotificationVariant.LUMO_ERROR);
-                logger.error("User already exists");
+                logger.error("Benutzer: " + username + " existiert schon.");
             } catch (Exception e) {
                 showNotification(Notification.Position.BOTTOM_END, "Irgendwas lief schief", NotificationVariant.LUMO_ERROR);
                 logger.error("Error while creating user: " + e.getMessage());
@@ -106,10 +106,10 @@ public class AdminPanelView extends VerticalLayout {
             logger.info("Benutzer: " + breakDeciderUser.getUsername() + " gelöscht.");
         } catch (DataIntegrityViolationException e) {
             showNotification(Notification.Position.BOTTOM_END, "User konnte SQL mäßig nicht gelöscht werden", NotificationVariant.LUMO_ERROR);
-            logger.error("Benutzer konnte nicht gelöscht werden: " + e.getMessage());
+            logger.error("Benutzer konnte nicht gelöscht werden: " + e);
         } catch (Exception e) {
             showNotification(Notification.Position.BOTTOM_END, "Irgendwas lief schief", NotificationVariant.LUMO_ERROR);
-            logger.error("Benutzer konnte nicht gelöscht werden: " + e.getMessage());
+            logger.error("Es trat ein Fehler auf: " + e);
         }
     }
 

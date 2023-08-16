@@ -10,10 +10,8 @@ import java.util.Optional;
 @Repository
 public interface BreakDeciderUserRepository extends JpaRepository<BreakDeciderUser, Long> {
     // Sie können hier benutzerdefinierte Abfrage-Methoden hinzufügen, falls erforderlich
-
     @Transactional
     Optional<BreakDeciderUser> findByUsername(String username);
-
 
     @Transactional
     boolean existsByUsername(String username);

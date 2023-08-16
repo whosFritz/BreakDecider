@@ -25,7 +25,7 @@ public class RegistrationController {
         try {
             registrationService.register(request);
         } catch (IllegalStateException e) {
-            logger.error("Username already exists");
+            logger.error("Benutzername bereits vergeben");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (HttpServerErrorException.InternalServerError e) {
             logger.error("An InternalServerError occurred while registering a user");
