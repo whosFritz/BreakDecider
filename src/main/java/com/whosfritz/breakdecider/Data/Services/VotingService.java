@@ -4,7 +4,6 @@ import com.whosfritz.breakdecider.Data.Entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -17,7 +16,7 @@ public class VotingService {
         this.abstimmungsthemaService = abstimmungsthemaService;
     }
 
-    @Transactional
+
     public void handleVote(Entscheidung entscheidung,
                            LocalDate localDate,
                            BreakDeciderUser authenticatedUser,
@@ -40,7 +39,7 @@ public class VotingService {
         }
     }
 
-    @Transactional
+
     public void checkIfAlreadyVoted(BreakDeciderUser authenticatedUser, Abstimmungsthema abstimmungsthema) {
         for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelSet()) {
             if (stimmzettel.getBreakDeciderUser().getUsername().equals(authenticatedUser.getUsername())) {
@@ -50,7 +49,6 @@ public class VotingService {
     }
 
 
-    @Transactional
     public void handleCreateAbstimmung(BreakDeciderUser ersteller, LocalDate localDate, Status status, String titel, String beschreibung) {
         try {
             Abstimmungsthema abstimmungsthema = new Abstimmungsthema();

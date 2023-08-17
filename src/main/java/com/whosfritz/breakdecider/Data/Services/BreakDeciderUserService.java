@@ -30,6 +30,7 @@ public class BreakDeciderUserService implements UserDetailsService {
                 -> new UsernameNotFoundException("User " + username + " not found"));
     }
 
+
     @Transactional
     public void deleteUserWithStimmzettel(Long userId) {
         try {
@@ -59,31 +60,29 @@ public class BreakDeciderUserService implements UserDetailsService {
     }
 
 
-    @Transactional
     public boolean userExists(String username) {
         return breakDeciderUserRepository.existsByUsername(username);
     }
 
 
-    @Transactional
     public List<BreakDeciderUser> getAllUsers() {
         return breakDeciderUserRepository.findAll();
     }
 
-    @Transactional
+
     public void save(BreakDeciderUser breakDeciderUser) {
         breakDeciderUserRepository.save(breakDeciderUser);
     }
 
 
     // function to get user by username
-    @Transactional
+
     public BreakDeciderUser getUserByUsername(String username) {
         return breakDeciderUserRepository.findByUsername(username).orElseThrow(()
                 -> new UsernameNotFoundException("User " + username + " not found"));
     }
 
-    @Transactional
+
     public void updateUser(BreakDeciderUser breakDeciderUser, String oldPasswordString, String newPasswordString) {
         if (!bCryptPasswordEncoder.matches(oldPasswordString, breakDeciderUser.getPassword())) {
             throw new PasswordIncorrectException("Das alte Passwort ist nicht korrekt.");
