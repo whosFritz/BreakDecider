@@ -1,12 +1,11 @@
 package com.whosfritz.breakdecider.Registration;
 
 import com.whosfritz.breakdecider.Data.Entities.AppUserRole;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
