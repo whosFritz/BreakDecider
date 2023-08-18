@@ -13,15 +13,21 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.whosfritz.breakdecider.Data.Entities.Abstimmungsthema;
 import com.whosfritz.breakdecider.Data.Entities.AppUserRole;
 import com.whosfritz.breakdecider.Data.Entities.BreakDeciderUser;
+import com.whosfritz.breakdecider.Data.Entities.Status;
+import com.whosfritz.breakdecider.Data.Services.AbstimmungsthemaService;
 import com.whosfritz.breakdecider.Data.Services.BreakDeciderUserService;
 import com.whosfritz.breakdecider.Registration.RegistrationRequest;
 import com.whosfritz.breakdecider.Registration.RegistrationService;
+import com.whosfritz.breakdecider.Security.SecurityService;
 import jakarta.annotation.security.RolesAllowed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+
+import java.util.List;
 
 import static com.whosfritz.breakdecider.Registration.SecretRegistrationToken.REGISTRATION_TOKEN;
 import static com.whosfritz.breakdecider.ui.utils.showNotification;
@@ -32,26 +38,31 @@ import static com.whosfritz.breakdecider.ui.utils.showNotification;
 public class AdminPanelView extends VerticalLayout {
     private final BreakDeciderUserService breakDeciderUserService;
     private final RegistrationService registrationService;
+    private final AbstimmungsthemaService abstimmungsthemaService;
+    private final SecurityService securityService;
     private final TextField usernameTF = new TextField();
     private final PasswordField passwordPF = new PasswordField();
     private final ComboBox<AppUserRole> appUserRoleCB = new ComboBox<>();
     private final Grid<BreakDeciderUser> grid = new Grid<>(BreakDeciderUser.class);
+    private final Grid<Abstimmungsthema> list = new Grid<>(Abstimmungsthema.class);
 
     private final Logger logger = LoggerFactory.getLogger(AdminPanelView.class);
 
 
-    public AdminPanelView(BreakDeciderUserService breakDeciderUserService, RegistrationService registrationService) {
+    public AdminPanelView(BreakDeciderUserService breakDeciderUserService, RegistrationService registrationService, AbstimmungsthemaService abstimmungsthemaService, SecurityService securityService) {
         this.breakDeciderUserService = breakDeciderUserService;
         this.registrationService = registrationService;
+        this.abstimmungsthemaService = abstimmungsthemaService;
+        this.securityService = securityService;
         // formlayout with two input fields to create a user with username and password
         // grid to show all users
         Paragraph paragraph = new Paragraph("Benutzer registrieren");
         FormLayout formLayout = new FormLayout();
 
         appUserRoleCB.setItems(AppUserRole.values());
-        formLayout.addFormItem(usernameTF, "Username");
-        formLayout.addFormItem(passwordPF, "Password");
-        formLayout.addFormItem(appUserRoleCB, "Role");
+        formLayout.addFormItem(usernameTF, "Benutzername");
+        formLayout.addFormItem(passwordPF, "Passwort");
+        formLayout.addFormItem(appUserRoleCB, "Rolle");
         Button createUserButton = new Button("Benutzer registrieren");
         formLayout.addFormItem(createUserButton, "Benutzer registrieren");
         createUserButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -80,6 +91,57 @@ public class AdminPanelView extends VerticalLayout {
             grid.setItems(breakDeciderUserService.getAllUsers());
         });
         add(paragraph, formLayout, grid, deleteUsersButton);
+
+
+        List<Abstimmungsthema> abstimmungsthemenList = abstimmungsthemaService.getAllAbstimmungsthemen(); // Get the list of Abstimmungsthemen from the service
+        list.setColumns("status", "titel", "beschreibung", "ersteller", "erstelldatum");
+
+        // Set the column headers
+        list.getColumnByKey("ersteller").setHeader("Ersteller").setSortable(true);
+        list.getColumnByKey("erstelldatum").setHeader("Erstelldatum").setSortable(true);
+        list.getColumnByKey("status").setHeader("Status").setSortable(true);
+        list.getColumnByKey("titel").setHeader("Titel").setSortable(true);
+        list.getColumnByKey("beschreibung").setHeader("Beschreibung").setSortable(true);
+        // Add a custom column for the "Yes" button
+        // show 2 buttons in one column (yes and no)
+
+
+        list.addComponentColumn(abstimmungsthema -> {
+            // combo box in vaadin switching between status OPEN and CLOSED
+            ComboBox<Status> statusComboBox = new ComboBox<>();
+            statusComboBox.setItems(Status.OPEN, Status.CLOSED);
+            statusComboBox.setValue(abstimmungsthema.getStatus());
+            // on change listener to statusComboBox
+            statusComboBox.addValueChangeListener(event -> {
+                Status changedStatus = (Status) event.getValue();
+                if (changedStatus != abstimmungsthema.getStatus()) {
+                    if (changedStatus == Status.CLOSED) {
+                        abstimmungsthemaService.closeAbstimmungsthema(abstimmungsthema);
+                        showNotification(Notification.Position.BOTTOM_END, "Abstimmung geschlossen", NotificationVariant.LUMO_SUCCESS);
+                        logger.info("Abstimmung mit Titel: " + abstimmungsthema.getTitel() + " geschlossen von: " + this.securityService.getAuthenticatedUser().getUsername());
+                        list.getDataProvider().refreshItem(abstimmungsthema);
+                    } else {
+                        abstimmungsthemaService.openAbstimmungsthema(abstimmungsthema);
+                        showNotification(Notification.Position.BOTTOM_END, "Wieder eröffnet Abstimmung geöffnet", NotificationVariant.LUMO_SUCCESS);
+                        logger.info("Abstimmung mit Titel: " + abstimmungsthema.getTitel() + " wurde geöffnet von: " + this.securityService.getAuthenticatedUser().getUsername());
+                        list.getDataProvider().refreshItem(abstimmungsthema);
+                    }
+                }
+
+            });
+
+            return statusComboBox;
+        }).setHeader("Status ändern");
+
+
+        list.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
+
+
+        // Set the items (data) for the grid
+        list.setItems(abstimmungsthemenList);
+
+
+        add(list);
     }
 
     private void createUser() {
