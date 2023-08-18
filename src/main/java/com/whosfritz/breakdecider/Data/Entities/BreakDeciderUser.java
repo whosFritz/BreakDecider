@@ -2,7 +2,6 @@ package com.whosfritz.breakdecider.Data.Entities;
 
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +17,6 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 @NoArgsConstructor
 @Table(name = "users")
 public class BreakDeciderUser implements UserDetails {

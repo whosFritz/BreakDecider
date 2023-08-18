@@ -1,7 +1,10 @@
 package com.whosfritz.breakdecider.Data.Entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -9,7 +12,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 @NoArgsConstructor
 @Table(name = "stimmzettel", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"breakdecideruser_id", "abstimmungsthema_id"})
