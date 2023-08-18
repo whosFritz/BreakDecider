@@ -39,12 +39,8 @@ public class CreateAbstimmungView extends VerticalLayout {
     private VerticalLayout createAbstimmungForm() {
         TextField titelTF = new TextField("Abstimmungstitel");
         titelTF.setRequiredIndicatorVisible(true);
-        titelTF.setWidth("200%");
-        titelTF.setHeight("200%");
         titelTF.setPlaceholder("Urlaubsbilder in der Cloud");
         TextField beschreibungTF = new TextField("Beschreibung");
-        beschreibungTF.setWidth("200%");
-        beschreibungTF.setHeight("200%");
         beschreibungTF.setRequiredIndicatorVisible(true);
         beschreibungTF.setPlaceholder("Sind Urlaubsbilder in der Cloud sicher?");
         Button createButton = new Button("Erstellen");
