@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping(path = "/api/v1/registration")
@@ -46,6 +48,20 @@ public class RegistrationController {
         }
         logger.info("Der folgende Benutzer: " + request.getUsername() + "wurde erfolgreich registriert");
         return ResponseEntity.status(HttpStatus.CREATED).body("Benutzer " + request.getUsername() + " wurde erfolgreich registriert");
+    }
+
+    @PostMapping("/register-multiple")
+    public ResponseEntity<String> registerMultipleUsers(@RequestBody List<RegistrationRequest> requests) {
+        for (RegistrationRequest request : requests) {
+            try {
+                registrationService.register(request);
+                logger.info("Der folgende Benutzer: " + request.getUsername() + " wurde erfolgreich registriert");
+            } catch (Exception e) {
+                logger.error("Ein Fehler trat auf beim Registrieren eines Benutzers");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("Benutzer wurden erfolgreich registriert");
     }
 
 }
