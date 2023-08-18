@@ -107,13 +107,11 @@ public class AdminPanelView extends VerticalLayout {
 
 
         list.addComponentColumn(abstimmungsthema -> {
-            // combo box in vaadin switching between status OPEN and CLOSED
             ComboBox<Status> statusComboBox = new ComboBox<>();
             statusComboBox.setItems(Status.OPEN, Status.CLOSED);
             statusComboBox.setValue(abstimmungsthema.getStatus());
-            // on change listener to statusComboBox
             statusComboBox.addValueChangeListener(event -> {
-                Status changedStatus = (Status) event.getValue();
+                Status changedStatus = event.getValue();
                 if (changedStatus != abstimmungsthema.getStatus()) {
                     if (changedStatus == Status.CLOSED) {
                         abstimmungsthemaService.closeAbstimmungsthema(abstimmungsthema);
