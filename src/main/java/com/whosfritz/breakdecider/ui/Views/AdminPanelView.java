@@ -117,7 +117,7 @@ public class AdminPanelView extends VerticalLayout {
             showNotification(Notification.Position.BOTTOM_END, "Benutzer konnte nicht gelöscht werden", NotificationVariant.LUMO_ERROR);
             logger.error("Benutzer konnte nicht gelöscht werden: " + exception);
         } catch (DataIntegrityViolationException e) {
-            showNotification(Notification.Position.BOTTOM_END, "User konnte SQL mäßig nicht gelöscht werden", NotificationVariant.LUMO_ERROR);
+            showNotification(Notification.Position.BOTTOM_END, "Benutzer konnte SQL mäßig nicht gelöscht werden", NotificationVariant.LUMO_ERROR);
             logger.error("Benutzer konnte nicht gelöscht werden: " + e);
         } catch (Exception e) {
             showNotification(Notification.Position.BOTTOM_END, "Irgendwas lief schief", NotificationVariant.LUMO_ERROR);

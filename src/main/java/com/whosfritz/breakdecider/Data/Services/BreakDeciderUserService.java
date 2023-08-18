@@ -27,7 +27,7 @@ public class BreakDeciderUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return breakDeciderUserRepository.findByUsername(username).orElseThrow(()
-                -> new UsernameNotFoundException("User " + username + " not found"));
+                -> new UsernameNotFoundException("Benutzer " + username + " not found"));
     }
 
 
@@ -79,7 +79,7 @@ public class BreakDeciderUserService implements UserDetailsService {
 
     public BreakDeciderUser getUserByUsername(String username) {
         return breakDeciderUserRepository.findByUsername(username).orElseThrow(()
-                -> new UsernameNotFoundException("User " + username + " not found"));
+                -> new UsernameNotFoundException("Benutzer " + username + " not found"));
     }
 
 
@@ -90,7 +90,7 @@ public class BreakDeciderUserService implements UserDetailsService {
         try {
             breakDeciderUser = getUserByUsername(breakDeciderUser.getUsername());
         } catch (UsernameNotFoundException usernameNotFoundException) {
-            throw new UsernameNotFoundException("User konnte nicht ermittelt werden");
+            throw new UsernameNotFoundException("Benutzer konnte nicht ermittelt werden");
         }
         if (bCryptPasswordEncoder.matches(newPasswordString, breakDeciderUser.getPassword())) {
             throw new NewEqualsOldPasswordException("Das neue Passwort darf nicht dem alten Passwort entsprechen.");

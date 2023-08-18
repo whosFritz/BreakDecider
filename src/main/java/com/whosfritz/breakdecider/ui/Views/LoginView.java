@@ -46,7 +46,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
         loginForm.setAction("login");
         loginForm.setForgotPasswordButtonVisible(true);
         loginForm.addForgotPasswordListener(event -> Notification.show("Wenden Sie sich dafür bitte an Fritz Schubert.❤️"));
-        loginForm.addLoginListener(event -> logger.info("User versuchte sich einzuloggen mit Benutzername: " + event.getUsername()));
+        loginForm.addLoginListener(event -> logger.info("Benutzer versuchte sich einzuloggen mit Benutzername: " + event.getUsername()));
         loginForm.setI18n(i18n);
 
         add(

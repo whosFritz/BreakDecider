@@ -16,6 +16,6 @@ public class AuthSuccessHandler implements ApplicationListener<AuthenticationSuc
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
         BreakDeciderUser logged_in_user = (BreakDeciderUser) event.getAuthentication().getPrincipal();
-        logger.info("User wurde eingeloggt: " + logged_in_user.getUsername());
+        logger.info("Benutzer wurde eingeloggt: " + logged_in_user.getUsername());
     }
 }

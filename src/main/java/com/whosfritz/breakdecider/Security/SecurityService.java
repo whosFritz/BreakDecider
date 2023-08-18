@@ -23,20 +23,20 @@ public class SecurityService {
         if (principal instanceof UserDetails) {
             return (BreakDeciderUser) context.getAuthentication().getPrincipal();
         }
-        logger.error("User konnte nicht ermittelt werden");
-        throw new RuntimeException("User konnte nicht ermittelt werden");
+        logger.error("Benutzer konnte nicht ermittelt werden");
+        throw new RuntimeException("Benutzer konnte nicht ermittelt werden");
     }
 
     public void logout() {
         try {
-            logger.info("User wurde ausgeloggt: " + getAuthenticatedUser().getUsername());
+            logger.info("Benutzer wurde ausgeloggt: " + getAuthenticatedUser().getUsername());
             UI.getCurrent().getPage().setLocation(LOGOUT_SUCCESS_URL);
             SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
             logoutHandler.logout(
                     VaadinServletRequest.getCurrent().getHttpServletRequest(), null,
                     null);
         } catch (Exception e) {
-            logger.error("User konnte nicht ausgeloggt werden: " + getAuthenticatedUser().getUsername());
+            logger.error("Benutzer konnte nicht ausgeloggt werden: " + getAuthenticatedUser().getUsername());
         }
 
     }

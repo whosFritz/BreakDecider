@@ -61,7 +61,6 @@ public class RegistrationControllerTest {
     @Test
     public void testConflictRegistration() {
         RegistrationRequest request = new RegistrationRequest("existing_username", "password", AppUserRole.ROLE_USER, REGISTRATION_TOKEN);
-        // Assuming registrationService throws IllegalStateException
         doThrow(IllegalStateException.class).when(registrationService).register(request);
 
         ResponseEntity<String> response = registrationController.register(request);
