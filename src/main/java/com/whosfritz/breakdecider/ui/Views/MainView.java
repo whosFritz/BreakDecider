@@ -114,6 +114,7 @@ public class MainView extends AppLayout {
                 createTab("Jetzt Abstimmen", VaadinIcon.CHECK, AbstimmungenView.class),
                 createTab("Abstimmung erstellen", VaadinIcon.PLUS, CreateAbstimmungView.class),
                 createTab("Dein Profil", VaadinIcon.USER, UserProfileView.class),
+                createTab("Admin Panel", VaadinIcon.USER_STAR, AdminPanelView.class)
         };
     }
 
