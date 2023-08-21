@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class VotingService {
@@ -18,14 +18,14 @@ public class VotingService {
 
 
     public void handleVote(Entscheidung entscheidung,
-                           LocalDate localDate,
+                           LocalDateTime localDateTime,
                            BreakDeciderUser authenticatedUser,
                            Abstimmungsthema abstimmungsthema
     ) {
         checkIfAlreadyVoted(authenticatedUser, abstimmungsthema);
         Stimmzettel neuerStimmzettel = new Stimmzettel();
         neuerStimmzettel.setEntscheidung(entscheidung);
-        neuerStimmzettel.setStimmabgabedatum(localDate);
+        neuerStimmzettel.setStimmabgabedatum(localDateTime);
         neuerStimmzettel.setBreakDeciderUser(authenticatedUser);
         neuerStimmzettel.setAbstimmungsthema(abstimmungsthema);
 
@@ -43,10 +43,10 @@ public class VotingService {
     }
 
 
-    public void handleCreateAbstimmung(BreakDeciderUser ersteller, LocalDate localDate, Status status, String titel, String beschreibung) {
+    public void handleCreateAbstimmung(BreakDeciderUser ersteller, LocalDateTime localDateTime, Status status, String titel, String beschreibung) {
         Abstimmungsthema abstimmungsthema = new Abstimmungsthema();
         abstimmungsthema.setErsteller(ersteller.getUsername());
-        abstimmungsthema.setErstelldatum(localDate);
+        abstimmungsthema.setErstelldatum(localDateTime);
         abstimmungsthema.setStatus(status);
         abstimmungsthema.setTitel(titel);
         abstimmungsthema.setBeschreibung(beschreibung);

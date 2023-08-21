@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @AllArgsConstructor
@@ -27,7 +27,7 @@ public class Stimmzettel {
     private Entscheidung entscheidung;
 
     @Column(name = "stimmabgabedatum")
-    private LocalDate stimmabgabedatum;
+    private LocalDateTime stimmabgabedatum;
 
     @ManyToOne()
     @JoinColumn(name = "breakdecideruser_id")

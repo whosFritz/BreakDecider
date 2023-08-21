@@ -22,7 +22,7 @@ import jakarta.annotation.security.PermitAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.whosfritz.breakdecider.ui.utils.showNotification;
@@ -125,10 +125,10 @@ public class AbstimmungenView extends VerticalLayout {
             Entscheidung entscheidung,
             Abstimmungsthema abstimmungsthema
     ) {
-        LocalDate localDate = LocalDate.now();
+        LocalDateTime localDateTime = LocalDateTime.now();
         if (entscheidung.equals(Entscheidung.JA)) {
             try {
-                votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
+                votingService.handleVote(entscheidung, localDateTime, securityService.getAuthenticatedUser(), abstimmungsthema);
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
                 list.getDataProvider().refreshItem(abstimmungsthema);
             } catch (IllegalStateException e) {
@@ -140,7 +140,7 @@ public class AbstimmungenView extends VerticalLayout {
             }
         } else {
             try {
-                votingService.handleVote(entscheidung, localDate, securityService.getAuthenticatedUser(), abstimmungsthema);
+                votingService.handleVote(entscheidung, localDateTime, securityService.getAuthenticatedUser(), abstimmungsthema);
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
                 list.getDataProvider().refreshItem(abstimmungsthema);
             } catch (IllegalStateException e) {

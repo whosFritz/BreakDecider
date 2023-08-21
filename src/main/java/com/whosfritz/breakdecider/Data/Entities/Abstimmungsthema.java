@@ -3,7 +3,7 @@ package com.whosfritz.breakdecider.Data.Entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +22,7 @@ public class Abstimmungsthema {
     @Column(name = "ersteller")
     private String ersteller;
     @Column(name = "erstelldatum")
-    private LocalDate erstelldatum;
+    private LocalDateTime erstelldatum;
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;

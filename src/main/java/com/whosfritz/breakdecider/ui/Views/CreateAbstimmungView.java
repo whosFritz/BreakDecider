@@ -14,7 +14,7 @@ import jakarta.annotation.security.PermitAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static com.whosfritz.breakdecider.ui.utils.showNotification;
 
@@ -59,7 +59,7 @@ public class CreateAbstimmungView extends VerticalLayout {
             try {
                 votingService.handleCreateAbstimmung(
                         securityService.getAuthenticatedUser(),
-                        LocalDate.now(),
+                        LocalDateTime.now(),
                         Status.OPEN,
                         titelTF.getValue(),
                         beschreibungTF.getValue());
