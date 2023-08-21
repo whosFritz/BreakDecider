@@ -92,4 +92,13 @@ public class BreakDeciderUserService implements UserDetailsService {
         save(breakDeciderUser);
     }
 
+    public void enableUser(BreakDeciderUser breakDeciderUser) {
+        breakDeciderUser.setEnabled(true);
+        save(breakDeciderUser);
+    }
+
+    public void disableUser(BreakDeciderUser breakDeciderUser) {
+        breakDeciderUser.setEnabled(false);
+        save(breakDeciderUser);
+    }
 }
