@@ -39,7 +39,7 @@ public class UserProfileView extends VerticalLayout {
         // Add the password fields to the form layout
         formLayout.addFormItem(oldPasswordField, "Altes Passwort");
         formLayout.addFormItem(newPasswordField, "Neues Passwort");
-        formLayout.addFormItem(repeatPasswordField, "Passwort wiederholen");
+        formLayout.addFormItem(repeatPasswordField, "Neues Passwort wiederholen");
         formLayout.addFormItem(submitButton, "Passwort ändern");
 
 
