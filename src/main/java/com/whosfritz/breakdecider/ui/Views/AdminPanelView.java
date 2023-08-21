@@ -94,12 +94,11 @@ public class AdminPanelView extends VerticalLayout {
 
 
         List<Abstimmungsthema> abstimmungsthemenList = abstimmungsthemaService.getAllAbstimmungsthemen(); // Get the list of Abstimmungsthemen from the service
-        list.setColumns("status", "titel", "beschreibung", "ersteller", "erstelldatum");
+        list.setColumns("titel", "beschreibung", "ersteller", "erstelldatum");
 
         // Set the column headers
         list.getColumnByKey("ersteller").setHeader("Ersteller").setSortable(true);
         list.getColumnByKey("erstelldatum").setHeader("Erstelldatum").setSortable(true);
-        list.getColumnByKey("status").setHeader("Status").setSortable(true);
         list.getColumnByKey("titel").setHeader("Titel").setSortable(true);
         list.getColumnByKey("beschreibung").setHeader("Beschreibung").setSortable(true);
         // Add a custom column for the "Yes" button
@@ -129,7 +128,7 @@ public class AdminPanelView extends VerticalLayout {
             });
 
             return statusComboBox;
-        }).setHeader("Status ändern");
+        }).setHeader("Status");
 
 
         list.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
