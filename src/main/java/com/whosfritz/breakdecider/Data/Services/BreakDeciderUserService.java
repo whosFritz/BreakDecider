@@ -33,30 +33,23 @@ public class BreakDeciderUserService implements UserDetailsService {
 
     @Transactional
     public void deleteUserWithStimmzettel(Long userId) {
-        try {
-            List<Stimmzettel> stimmzettelList = stimmzettelService.getAllStimmzettelByUserId(userId);
+        List<Stimmzettel> stimmzettelList = stimmzettelService.getAllStimmzettelByUserId(userId);
 
-            for (Stimmzettel stimmzettel : stimmzettelList) {
-                // Remove from Abstimmungsthema
-                Abstimmungsthema abstimmungsthema = stimmzettel.getAbstimmungsthema();
-                if (abstimmungsthema != null) {
-                    abstimmungsthema.getStimmzettelSet().remove(stimmzettel);
-                } else {
-                    throw new NullPointerException("Stimmzettel " + stimmzettel.getId() + " hat kein Abstimmungsthema");
-                }
-
-                // Delete Stimmzettel by ID
-                stimmzettelService.deleteStimmzettelById(stimmzettel.getId());
+        for (Stimmzettel stimmzettel : stimmzettelList) {
+            // Remove from Abstimmungsthema
+            Abstimmungsthema abstimmungsthema = stimmzettel.getAbstimmungsthema();
+            if (abstimmungsthema != null) {
+                abstimmungsthema.getStimmzettelSet().remove(stimmzettel);
+            } else {
+                throw new NullPointerException("Stimmzettel " + stimmzettel.getId() + " hat kein Abstimmungsthema");
             }
 
-            // After deleting associated Stimmzettel, delete the user
-            breakDeciderUserRepository.deleteById(userId);
-        } catch (NullPointerException nullPointerException) {
-            throw nullPointerException;
-        } catch (Exception e) {
-            System.out.println(e);
-            throw e;
+            // Delete Stimmzettel by ID
+            stimmzettelService.deleteStimmzettelById(stimmzettel.getId());
         }
+
+        // After deleting associated Stimmzettel, delete the user
+        breakDeciderUserRepository.deleteById(userId);
     }
 
 
