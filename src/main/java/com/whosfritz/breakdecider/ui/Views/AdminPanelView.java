@@ -43,8 +43,8 @@ public class AdminPanelView extends VerticalLayout {
     private final TextField usernameTF = new TextField();
     private final PasswordField passwordPF = new PasswordField();
     private final ComboBox<AppUserRole> appUserRoleCB = new ComboBox<>();
-    private final Grid<BreakDeciderUser> grid = new Grid<>(BreakDeciderUser.class);
-    private final Grid<Abstimmungsthema> list = new Grid<>(Abstimmungsthema.class);
+    private final Grid<BreakDeciderUser> breakDeciderUserGrid = new Grid<>(BreakDeciderUser.class);
+    private final Grid<Abstimmungsthema> abstimmungsthemaGrid = new Grid<>(Abstimmungsthema.class);
 
     private final Logger logger = LoggerFactory.getLogger(AdminPanelView.class);
 
@@ -68,44 +68,65 @@ public class AdminPanelView extends VerticalLayout {
         createUserButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         createUserButton.addClickListener(event -> createUser());
 
-        grid.setColumns("username", "appUserRole", "locked", "enabled");
-        grid.setItems(breakDeciderUserService.getAllUsers());
-        grid.getColumnByKey("username").setHeader("Beschreibung").setSortable(true);
-        grid.getColumnByKey("appUserRole").setHeader("Rolle").setSortable(true);
-        grid.getColumnByKey("locked").setHeader("Zugang gesperrt").setSortable(true);
-        grid.getColumnByKey("enabled").setHeader("Freigeschaltet").setSortable(true);
-        grid.setSelectionMode(Grid.SelectionMode.MULTI);
-        grid.addItemClickListener(event -> {
-            if (grid.getSelectedItems().contains(event.getItem())) {
-                grid.deselect(event.getItem());
+        breakDeciderUserGrid.setColumns("username", "appUserRole", "locked");
+        breakDeciderUserGrid.setItems(breakDeciderUserService.getAllUsers());
+        breakDeciderUserGrid.getColumnByKey("username").setHeader("Beschreibung").setSortable(true);
+        breakDeciderUserGrid.getColumnByKey("appUserRole").setHeader("Rolle").setSortable(true);
+        breakDeciderUserGrid.getColumnByKey("locked").setHeader("Locked").setSortable(true);
+        breakDeciderUserGrid.setSelectionMode(Grid.SelectionMode.MULTI);
+        breakDeciderUserGrid.addItemClickListener(event -> {
+            if (breakDeciderUserGrid.getSelectedItems().contains(event.getItem())) {
+                breakDeciderUserGrid.deselect(event.getItem());
             } else {
-                grid.select(event.getItem());
+                breakDeciderUserGrid.select(event.getItem());
             }
         });
+        breakDeciderUserGrid.addComponentColumn(breakDeciderUser -> {
+            ComboBox<Boolean> enabledComboBox = new ComboBox<>();
+            enabledComboBox.setItems(true, false);
+            enabledComboBox.setValue(breakDeciderUser.isEnabled());
+            enabledComboBox.addValueChangeListener(event -> {
+                Boolean changedEnabled = event.getValue();
+                if (changedEnabled != breakDeciderUser.isEnabled()) {
+                    if (changedEnabled) {
+                        breakDeciderUserService.enableUser(breakDeciderUser);
+                        showNotification(Notification.Position.BOTTOM_END, "Benutzer freigeschaltet", NotificationVariant.LUMO_SUCCESS);
+                        logger.info("Benutzer: " + breakDeciderUser.getUsername() + " freigeschaltet von: " + this.securityService.getAuthenticatedUser().getUsername());
+                        breakDeciderUserGrid.getDataProvider().refreshItem(breakDeciderUser);
+                    } else {
+                        breakDeciderUserService.disableUser(breakDeciderUser);
+                        showNotification(Notification.Position.BOTTOM_END, "Benutzer gesperrt", NotificationVariant.LUMO_SUCCESS);
+                        logger.info("Benutzer: " + breakDeciderUser.getUsername() + " gesperrt von: " + this.securityService.getAuthenticatedUser().getUsername());
+                        breakDeciderUserGrid.getDataProvider().refreshItem(breakDeciderUser);
+                    }
+                }
+            });
+            return enabledComboBox;
+        }).setHeader("Enabled");
 
 
         Button deleteUsersButton = new Button("Benutzer löschen");
         deleteUsersButton.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY);
         deleteUsersButton.addClickListener(event -> {
-            grid.getSelectedItems().forEach(this::handleDeletion);
-            grid.setItems(breakDeciderUserService.getAllUsers());
+            breakDeciderUserGrid.getSelectedItems().forEach(this::handleDeletion);
+            breakDeciderUserGrid.setItems(breakDeciderUserService.getAllUsers());
         });
-        add(paragraph, formLayout, grid, deleteUsersButton);
+        add(paragraph, formLayout, breakDeciderUserGrid, deleteUsersButton);
 
 
         List<Abstimmungsthema> abstimmungsthemenList = abstimmungsthemaService.getAllAbstimmungsthemen(); // Get the list of Abstimmungsthemen from the service
-        list.setColumns("titel", "beschreibung", "ersteller", "erstelldatum");
+        abstimmungsthemaGrid.setColumns("titel", "beschreibung", "ersteller", "erstelldatum");
 
         // Set the column headers
-        list.getColumnByKey("ersteller").setHeader("Ersteller").setSortable(true);
-        list.getColumnByKey("erstelldatum").setHeader("Erstelldatum").setSortable(true);
-        list.getColumnByKey("titel").setHeader("Titel").setSortable(true);
-        list.getColumnByKey("beschreibung").setHeader("Beschreibung").setSortable(true);
+        abstimmungsthemaGrid.getColumnByKey("ersteller").setHeader("Ersteller").setSortable(true);
+        abstimmungsthemaGrid.getColumnByKey("erstelldatum").setHeader("Erstelldatum").setSortable(true);
+        abstimmungsthemaGrid.getColumnByKey("titel").setHeader("Titel").setSortable(true);
+        abstimmungsthemaGrid.getColumnByKey("beschreibung").setHeader("Beschreibung").setSortable(true);
         // Add a custom column for the "Yes" button
         // show 2 buttons in one column (yes and no)
 
 
-        list.addComponentColumn(abstimmungsthema -> {
+        abstimmungsthemaGrid.addComponentColumn(abstimmungsthema -> {
             ComboBox<Status> statusComboBox = new ComboBox<>();
             statusComboBox.setItems(Status.OPEN, Status.CLOSED);
             statusComboBox.setValue(abstimmungsthema.getStatus());
@@ -116,12 +137,12 @@ public class AdminPanelView extends VerticalLayout {
                         abstimmungsthemaService.closeAbstimmungsthema(abstimmungsthema);
                         showNotification(Notification.Position.BOTTOM_END, "Abstimmung geschlossen", NotificationVariant.LUMO_SUCCESS);
                         logger.info("Abstimmung mit Titel: " + abstimmungsthema.getTitel() + " geschlossen von: " + this.securityService.getAuthenticatedUser().getUsername());
-                        list.getDataProvider().refreshItem(abstimmungsthema);
+                        abstimmungsthemaGrid.getDataProvider().refreshItem(abstimmungsthema);
                     } else {
                         abstimmungsthemaService.openAbstimmungsthema(abstimmungsthema);
                         showNotification(Notification.Position.BOTTOM_END, "Wieder eröffnet Abstimmung geöffnet", NotificationVariant.LUMO_SUCCESS);
                         logger.info("Abstimmung mit Titel: " + abstimmungsthema.getTitel() + " wurde geöffnet von: " + this.securityService.getAuthenticatedUser().getUsername());
-                        list.getDataProvider().refreshItem(abstimmungsthema);
+                        abstimmungsthemaGrid.getDataProvider().refreshItem(abstimmungsthema);
                     }
                 }
 
@@ -131,14 +152,14 @@ public class AdminPanelView extends VerticalLayout {
         }).setHeader("Status");
 
 
-        list.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
+        abstimmungsthemaGrid.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
 
 
         // Set the items (data) for the grid
-        list.setItems(abstimmungsthemenList);
+        abstimmungsthemaGrid.setItems(abstimmungsthemenList);
 
 
-        add(list);
+        add(abstimmungsthemaGrid);
     }
 
     private void createUser() {
@@ -152,7 +173,7 @@ public class AdminPanelView extends VerticalLayout {
                 usernameTF.clear();
                 passwordPF.clear();
                 appUserRoleCB.clear();
-                grid.setItems(breakDeciderUserService.getAllUsers());
+                breakDeciderUserGrid.setItems(breakDeciderUserService.getAllUsers());
                 showNotification(Notification.Position.BOTTOM_END, "Benutzer erstellt", NotificationVariant.LUMO_SUCCESS);
                 logger.info("Benutzer: " + username + " erstellt.");
             } catch (IllegalStateException e) {
