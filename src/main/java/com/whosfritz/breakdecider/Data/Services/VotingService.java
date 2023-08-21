@@ -22,21 +22,15 @@ public class VotingService {
                            BreakDeciderUser authenticatedUser,
                            Abstimmungsthema abstimmungsthema
     ) {
-        try {
-            checkIfAlreadyVoted(authenticatedUser, abstimmungsthema);
-            Stimmzettel neuerStimmzettel = new Stimmzettel();
-            neuerStimmzettel.setEntscheidung(entscheidung);
-            neuerStimmzettel.setStimmabgabedatum(localDate);
-            neuerStimmzettel.setBreakDeciderUser(authenticatedUser);
-            neuerStimmzettel.setAbstimmungsthema(abstimmungsthema);
+        checkIfAlreadyVoted(authenticatedUser, abstimmungsthema);
+        Stimmzettel neuerStimmzettel = new Stimmzettel();
+        neuerStimmzettel.setEntscheidung(entscheidung);
+        neuerStimmzettel.setStimmabgabedatum(localDate);
+        neuerStimmzettel.setBreakDeciderUser(authenticatedUser);
+        neuerStimmzettel.setAbstimmungsthema(abstimmungsthema);
 
-            abstimmungsthema.getStimmzettelSet().add(neuerStimmzettel);
-            abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
-        } catch (IllegalStateException e) {
-            throw e;
-        } catch (Exception e) {
-            throw e;
-        }
+        abstimmungsthema.getStimmzettelSet().add(neuerStimmzettel);
+        abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
     }
 
 
@@ -50,17 +44,12 @@ public class VotingService {
 
 
     public void handleCreateAbstimmung(BreakDeciderUser ersteller, LocalDate localDate, Status status, String titel, String beschreibung) {
-        try {
-            Abstimmungsthema abstimmungsthema = new Abstimmungsthema();
-            abstimmungsthema.setErsteller(ersteller.getUsername());
-            abstimmungsthema.setErstelldatum(localDate);
-            abstimmungsthema.setStatus(status);
-            abstimmungsthema.setTitel(titel);
-            abstimmungsthema.setBeschreibung(beschreibung);
-            abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
-        } catch (Exception e) {
-            logger.error("Fehler beim Erstellen der Abstimmung: " + e.getMessage());
-            throw e;
-        }
+        Abstimmungsthema abstimmungsthema = new Abstimmungsthema();
+        abstimmungsthema.setErsteller(ersteller.getUsername());
+        abstimmungsthema.setErstelldatum(localDate);
+        abstimmungsthema.setStatus(status);
+        abstimmungsthema.setTitel(titel);
+        abstimmungsthema.setBeschreibung(beschreibung);
+        abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
     }
 }
