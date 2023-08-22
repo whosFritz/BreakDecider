@@ -40,9 +40,11 @@ public class CreateAbstimmungView extends VerticalLayout {
         TextField titelTF = new TextField("Abstimmungstitel");
         titelTF.setRequiredIndicatorVisible(true);
         titelTF.setPlaceholder("Urlaubsbilder in der Cloud");
+        titelTF.setSizeFull();
         TextField beschreibungTF = new TextField("Beschreibung");
         beschreibungTF.setRequiredIndicatorVisible(true);
         beschreibungTF.setPlaceholder("Sind Urlaubsbilder in der Cloud sicher?");
+        beschreibungTF.setSizeFull();
         Button createButton = new Button("Erstellen");
         createButton.addClickListener(buttonClickEvent -> {
             // check if fields are not empty
