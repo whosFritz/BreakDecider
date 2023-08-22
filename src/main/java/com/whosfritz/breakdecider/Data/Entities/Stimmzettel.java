@@ -40,7 +40,7 @@ public class Stimmzettel {
 
     @Override
     public String toString() {
-        return "Stimmzettel(id=" + id + ", entscheidung=" + entscheidung + ")";
+        return "Stimmzettel(id=" + id + ", entscheidung=" + entscheidung + ", stimmabgabedatum=" + stimmabgabedatum + ", breakDeciderUser=" + breakDeciderUser.getUsername() + ", abstimmungsthema=" + abstimmungsthema.getTitel() + ")";
     }
 
 }
