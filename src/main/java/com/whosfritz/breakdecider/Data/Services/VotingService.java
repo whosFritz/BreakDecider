@@ -1,6 +1,7 @@
 package com.whosfritz.breakdecider.Data.Services;
 
 import com.whosfritz.breakdecider.Data.Entities.*;
+import com.whosfritz.breakdecider.Exception.SameVoteAgainException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,24 +23,29 @@ public class VotingService {
                            BreakDeciderUser authenticatedUser,
                            Abstimmungsthema abstimmungsthema
     ) {
-        checkIfAlreadyVoted(authenticatedUser, abstimmungsthema);
-        Stimmzettel neuerStimmzettel = new Stimmzettel();
-        neuerStimmzettel.setEntscheidung(entscheidung);
-        neuerStimmzettel.setStimmabgabedatum(localDateTime);
-        neuerStimmzettel.setBreakDeciderUser(authenticatedUser);
-        neuerStimmzettel.setAbstimmungsthema(abstimmungsthema);
-
-        abstimmungsthema.getStimmzettelSet().add(neuerStimmzettel);
-        abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
+        Stimmzettel neuerStimmzettel = checkIfAlreadyVoted(authenticatedUser, abstimmungsthema);
+        if (neuerStimmzettel == null) {
+            neuerStimmzettel = new Stimmzettel();
+            neuerStimmzettel.setBreakDeciderUser(authenticatedUser);
+            neuerStimmzettel.setAbstimmungsthema(abstimmungsthema);
+            abstimmungsthema.getStimmzettelSet().add(neuerStimmzettel);
+        }
+        if (neuerStimmzettel.getEntscheidung() != entscheidung) {
+            neuerStimmzettel.setEntscheidung(entscheidung);
+            neuerStimmzettel.setStimmabgabedatum(localDateTime);
+            abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
+        } else {
+            throw new SameVoteAgainException("Benutzer " + authenticatedUser.getUsername() + " hat bereits für " + entscheidung + " abgestimmt.");
+        }
     }
 
-
-    public void checkIfAlreadyVoted(BreakDeciderUser authenticatedUser, Abstimmungsthema abstimmungsthema) {
+    private Stimmzettel checkIfAlreadyVoted(BreakDeciderUser authenticatedUser, Abstimmungsthema abstimmungsthema) {
         for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelSet()) {
             if (stimmzettel.getBreakDeciderUser().getUsername().equals(authenticatedUser.getUsername())) {
-                throw new IllegalStateException("Benutzer " + authenticatedUser.getUsername() + " hat bereits abgestimmt");
+                return stimmzettel;
             }
         }
+        return null;
     }
 
 

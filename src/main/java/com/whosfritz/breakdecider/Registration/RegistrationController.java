@@ -46,7 +46,7 @@ public class RegistrationController {
             logger.error("Ein Fehler trat auf beim Registrieren eines Benutzers");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        logger.info("Der folgende Benutzer: " + request.getUsername() + "wurde erfolgreich registriert");
+        logger.info("Der folgende Benutzer: " + request.getUsername() + " wurde erfolgreich registriert");
         return ResponseEntity.status(HttpStatus.CREATED).body("Benutzer " + request.getUsername() + " wurde erfolgreich registriert");
     }
 
