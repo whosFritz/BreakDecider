@@ -2,9 +2,7 @@ package com.whosfritz.breakdecider.ui.Views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -17,6 +15,7 @@ import com.whosfritz.breakdecider.Data.Entities.Status;
 import com.whosfritz.breakdecider.Data.Entities.Stimmzettel;
 import com.whosfritz.breakdecider.Data.Services.AbstimmungsthemaService;
 import com.whosfritz.breakdecider.Data.Services.VotingService;
+import com.whosfritz.breakdecider.Exception.SameVoteAgainException;
 import com.whosfritz.breakdecider.Security.SecurityService;
 import jakarta.annotation.security.PermitAll;
 import org.slf4j.Logger;
@@ -33,12 +32,14 @@ import static com.whosfritz.breakdecider.ui.utils.showNotification;
 public class AbstimmungenView extends VerticalLayout {
     private final SecurityService securityService;
     private final VotingService votingService;
+    private final AbstimmungsthemaService abstimmungsthemaService;
     private final Logger logger = LoggerFactory.getLogger(AbstimmungenView.class);
     private Grid<Abstimmungsthema> list = new Grid<>(Abstimmungsthema.class);
 
-    public AbstimmungenView(AbstimmungsthemaService abstimmungsthemaService, SecurityService securityService, VotingService votingService) {
+    public AbstimmungenView(SecurityService securityService, VotingService votingService, AbstimmungsthemaService abstimmungsthemaService) {
         this.securityService = securityService;
         this.votingService = votingService;
+        this.abstimmungsthemaService = abstimmungsthemaService;
 
 
         List<Abstimmungsthema> abstimmungsthemenList = abstimmungsthemaService.getAllAbstimmungsthemen(); // Get the list of Abstimmungsthemen from the service
@@ -90,37 +91,6 @@ public class AbstimmungenView extends VerticalLayout {
         add(list);
     }
 
-
-    private Dialog createAbstimmungDialog(Abstimmungsthema thema) {
-        Dialog dialog = new Dialog();
-        dialog.setDraggable(true);
-        dialog.setHeaderTitle("Titel: " + thema.getTitel());
-        dialog.add(new Paragraph("Beschreibung: "), new Paragraph(thema.getBeschreibung()));
-        HorizontalLayout yes_no_buttons = new HorizontalLayout();
-        Button buttonYes = new Button("YES", (e) -> {
-            handleInput(Entscheidung.JA, thema);
-            dialog.close();
-        });
-        buttonYes.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
-                ButtonVariant.LUMO_SUCCESS);
-        Button buttonNo = new Button("NO", (e) -> {
-            handleInput(Entscheidung.NEIN, thema);
-            dialog.close();
-        });
-        buttonNo.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
-                ButtonVariant.LUMO_ERROR);
-
-        yes_no_buttons.add(buttonYes, buttonNo);
-
-        Button cancelButton = new Button("Abbrechen", (e) -> {
-            dialog.close();
-        });
-        dialog.add(yes_no_buttons);
-        cancelButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        dialog.getFooter().add(cancelButton);
-        return dialog;
-    }
-
     private void handleInput(
             Entscheidung entscheidung,
             Abstimmungsthema abstimmungsthema
@@ -130,10 +100,11 @@ public class AbstimmungenView extends VerticalLayout {
             try {
                 votingService.handleVote(entscheidung, localDateTime, securityService.getAuthenticatedUser(), abstimmungsthema);
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
+                logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat für das Thema " + abstimmungsthema.getTitel() + " mit JA abgestimmt.");
                 list.getDataProvider().refreshItem(abstimmungsthema);
-            } catch (IllegalStateException e) {
-                showNotification(Notification.Position.BOTTOM_END, "Du hast bereits abgestimmt", NotificationVariant.LUMO_ERROR);
-                logger.error("Fehler beim Ja-Abstimmen: " + e.getMessage());
+            } catch (SameVoteAgainException sameVoteAgainException) {
+                showNotification(Notification.Position.BOTTOM_END, "Schon für Ja abgestimmt", NotificationVariant.LUMO_ERROR);
+                logger.error(sameVoteAgainException.getMessage());
             } catch (Exception e) {
                 showNotification(Notification.Position.BOTTOM_END, "Fehler beim Ja-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Ja-Abstimmen: " + e.getMessage());
@@ -142,10 +113,11 @@ public class AbstimmungenView extends VerticalLayout {
             try {
                 votingService.handleVote(entscheidung, localDateTime, securityService.getAuthenticatedUser(), abstimmungsthema);
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
+                logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat für das Thema " + abstimmungsthema.getTitel() + " mit NEIN abgestimmt.");
                 list.getDataProvider().refreshItem(abstimmungsthema);
-            } catch (IllegalStateException e) {
-                showNotification(Notification.Position.BOTTOM_END, "Du hast bereits abgestimmt", NotificationVariant.LUMO_ERROR);
-                logger.error("Fehler beim Nein-Abstimmen: " + e.getMessage());
+            } catch (SameVoteAgainException sameVoteAgainException) {
+                showNotification(Notification.Position.BOTTOM_END, "Schon für NEIN abgestimmt", NotificationVariant.LUMO_ERROR);
+                logger.error(sameVoteAgainException.getMessage());
             } catch (Exception e) {
                 showNotification(Notification.Position.BOTTOM_END, "Fehler beim Nein-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Nein-Abstimmen: " + e.getMessage());
