@@ -15,7 +15,6 @@ import com.whosfritz.breakdecider.Data.Entities.Status;
 import com.whosfritz.breakdecider.Data.Entities.Stimmzettel;
 import com.whosfritz.breakdecider.Data.Services.AbstimmungsthemaService;
 import com.whosfritz.breakdecider.Data.Services.VotingService;
-import com.whosfritz.breakdecider.Exception.SameVoteAgainException;
 import com.whosfritz.breakdecider.Security.SecurityService;
 import jakarta.annotation.security.PermitAll;
 import org.slf4j.Logger;
@@ -102,9 +101,6 @@ public class AbstimmungenView extends VerticalLayout {
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
                 logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat für das Thema " + abstimmungsthema.getTitel() + " mit JA abgestimmt.");
                 list.getDataProvider().refreshItem(abstimmungsthema);
-            } catch (SameVoteAgainException sameVoteAgainException) {
-                showNotification(Notification.Position.BOTTOM_END, "Schon für Ja abgestimmt", NotificationVariant.LUMO_ERROR);
-                logger.error(sameVoteAgainException.getMessage());
             } catch (Exception e) {
                 showNotification(Notification.Position.BOTTOM_END, "Fehler beim Ja-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Ja-Abstimmen: " + e.getMessage());
@@ -115,9 +111,6 @@ public class AbstimmungenView extends VerticalLayout {
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
                 logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat für das Thema " + abstimmungsthema.getTitel() + " mit NEIN abgestimmt.");
                 list.getDataProvider().refreshItem(abstimmungsthema);
-            } catch (SameVoteAgainException sameVoteAgainException) {
-                showNotification(Notification.Position.BOTTOM_END, "Schon für NEIN abgestimmt", NotificationVariant.LUMO_ERROR);
-                logger.error(sameVoteAgainException.getMessage());
             } catch (Exception e) {
                 showNotification(Notification.Position.BOTTOM_END, "Fehler beim Nein-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Nein-Abstimmen: " + e.getMessage());
