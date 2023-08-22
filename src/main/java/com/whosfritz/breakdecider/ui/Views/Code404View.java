@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * It is accessed when a user tries to access a page that does not exist.
  * </p>
  */
+@PageTitle("404 | BreakDecider")
 @ParentLayout(MainView.class)
 public class Code404View
         extends RouteNotFoundError {
@@ -35,8 +36,8 @@ public class Code404View
         errorDiv.getStyle().set("align-items", "center");
 
 
-        StreamResource logoStream = new StreamResource("404.gif", () -> getClass().getResourceAsStream("/static/gifs/404.gif"));
-        Image errorImage = new Image(logoStream, "404.gif");
+        StreamResource logoStream = new StreamResource("404.png", () -> getClass().getResourceAsStream("/static/img/404-page-not-found.512x249.png"));
+        Image errorImage = new Image(logoStream, "404.png");
         errorDiv.add(errorImage);
 
         getElement().appendChild(errorDiv.getElement());

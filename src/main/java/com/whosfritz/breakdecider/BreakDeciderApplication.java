@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @Theme("break-decider")
-@PWA(name = "Break Decider", shortName = "Break Decider")
+@PWA(name = "Break Decider", shortName = "Break Decider", description = "Voting Web App")
 public class BreakDeciderApplication implements AppShellConfigurator {
 
     public static void main(String[] args) {

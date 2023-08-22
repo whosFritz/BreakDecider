@@ -1,5 +1,6 @@
 package com.whosfritz.breakdecider.ui.Views;
 
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.notification.Notification;
@@ -48,8 +49,10 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
         loginForm.addForgotPasswordListener(event -> Notification.show("Wenden Sie sich dafür bitte an Fritz Schubert.❤️"));
         loginForm.addLoginListener(event -> logger.info("Benutzer versuchte sich einzuloggen mit Benutzername: " + event.getUsername()));
         loginForm.setI18n(i18n);
+        Image image = new Image("images/img-login.png", "LOGO");
 
         add(
+                image,
                 loginForm
         );
     }
