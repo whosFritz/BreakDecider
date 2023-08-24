@@ -43,26 +43,27 @@ public class CreateAbstimmungView extends VerticalLayout {
         titelTF.setPlaceholder("Urlaubsbilder in der Cloud");
         titelTF.setSizeFull();
         TextField beschreibungTF = new TextField("Beschreibung");
+
         beschreibungTF.setRequiredIndicatorVisible(true);
         beschreibungTF.setPlaceholder("Sind Urlaubsbilder in der Cloud sicher?");
         beschreibungTF.setSizeFull();
         Button createButton = new Button("Erstellen");
+        createButton.setEnabled(false);
+        titelTF.addValueChangeListener(valueChangeEvent -> createButton.setEnabled(!titelTF.getValue().isEmpty() && !beschreibungTF.getValue().isEmpty()));
+        beschreibungTF.addValueChangeListener(valueChangeEvent -> createButton.setEnabled(!titelTF.getValue().isEmpty() && !beschreibungTF.getValue().isEmpty()));
         createButton.addClickShortcut(Key.ENTER);
         createButton.addClickListener(buttonClickEvent -> {
-            // check if fields are not empty
-            if (titelTF.getValue().isEmpty() || beschreibungTF.getValue().isEmpty()) {
-                showNotification(Notification.Position.BOTTOM_END, "Bitte alle Felder ausfüllen", NotificationVariant.LUMO_ERROR);
-                return;
-            }
             // check if user is logged in
             if (!securityService.isUserLoggedIn()) {
                 showNotification(Notification.Position.BOTTOM_END, "Bitte einloggen", NotificationVariant.LUMO_ERROR);
                 return;
             }
+            // check if titel is not too long
             if (titelTF.getValue().length() > 50) {
                 showNotification(Notification.Position.BOTTOM_END, "Titel darf nicht länger als 50 Zeichen sein", NotificationVariant.LUMO_ERROR);
                 return;
             }
+            // check if beschreibung is not too long
             if (beschreibungTF.getValue().length() > 150) {
                 showNotification(Notification.Position.BOTTOM_END, "Beschreibung darf nicht länger als 150 Zeichen sein", NotificationVariant.LUMO_ERROR);
                 return;

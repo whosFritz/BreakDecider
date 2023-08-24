@@ -75,6 +75,10 @@ public class AdminPanelView extends VerticalLayout {
         createUserButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         createUserButton.addClickListener(event -> createUser());
         createUserButton.addClickShortcut(Key.ENTER);
+        createUserButton.setEnabled(false);
+        usernameTF.addValueChangeListener(valueChangeEvent -> createUserButton.setEnabled(!usernameTF.getValue().isEmpty() && !passwordPF.getValue().isEmpty() && appUserRoleCB.getValue() != null));
+        passwordPF.addValueChangeListener(valueChangeEvent -> createUserButton.setEnabled(!usernameTF.getValue().isEmpty() && !passwordPF.getValue().isEmpty() && appUserRoleCB.getValue() != null));
+        appUserRoleCB.addValueChangeListener(valueChangeEvent -> createUserButton.setEnabled(!usernameTF.getValue().isEmpty() && !passwordPF.getValue().isEmpty() && appUserRoleCB.getValue() != null));
 
         Grid<BreakDeciderUser> breakDeciderUserGrid = new Grid<>();
         breakDeciderUserGridDataProvider = DataProvider.ofCollection(breakDeciderUserService.getAllUsers());
@@ -164,6 +168,8 @@ public class AdminPanelView extends VerticalLayout {
         });
 
         Button deleteAbstimmungButton = new Button("Abstimmungen löschen");
+        deleteAbstimmungButton.setEnabled(false);
+        abstimmungsthemaGridAdmin.addSelectionListener(selectionEvent -> deleteAbstimmungButton.setEnabled(!abstimmungsthemaGridAdmin.getSelectedItems().isEmpty()));
         deleteAbstimmungButton.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY);
         deleteAbstimmungButton.addClickListener(event -> {
             for (Abstimmungsthema abstimmungsthema : abstimmungsthemaGridAdmin.getSelectedItems()) {
@@ -218,26 +224,21 @@ public class AdminPanelView extends VerticalLayout {
         String username = usernameTF.getValue();
         String password = passwordPF.getValue();
         AppUserRole appUserRole = appUserRoleCB.getValue();
-
-        if (username != null && password != null && appUserRole != null) {
-            try {
-                BreakDeciderUser newBreakDeciderUser = registrationService.register(new RegistrationRequest(username, password, appUserRole, REGISTRATION_TOKEN));
-                breakDeciderUserGridDataProvider.getItems().add(newBreakDeciderUser);
-                breakDeciderUserGridDataProvider.refreshAll();
-                usernameTF.clear();
-                passwordPF.clear();
-                appUserRoleCB.clear();
-                showNotification(Notification.Position.BOTTOM_END, "Benutzer erstellt", NotificationVariant.LUMO_SUCCESS);
-                logger.info("Benutzer: " + username + " erstellt.");
-            } catch (IllegalStateException e) {
-                showNotification(Notification.Position.BOTTOM_END, "Dieser Benutzername existiert schon", NotificationVariant.LUMO_ERROR);
-                logger.error("Benutzer: " + username + " existiert schon.");
-            } catch (Exception e) {
-                showNotification(Notification.Position.BOTTOM_END, "Irgendwas lief schief", NotificationVariant.LUMO_ERROR);
-                logger.error("Fehler beim Erstellen von Benutzer: " + e.getMessage());
-            }
-        } else {
-            showNotification(Notification.Position.BOTTOM_END, "Bitte alle Felder ausfüllen", NotificationVariant.LUMO_ERROR);
+        try {
+            BreakDeciderUser newBreakDeciderUser = registrationService.register(new RegistrationRequest(username, password, appUserRole, REGISTRATION_TOKEN));
+            breakDeciderUserGridDataProvider.getItems().add(newBreakDeciderUser);
+            breakDeciderUserGridDataProvider.refreshAll();
+            usernameTF.clear();
+            passwordPF.clear();
+            appUserRoleCB.clear();
+            showNotification(Notification.Position.BOTTOM_END, "Benutzer erstellt", NotificationVariant.LUMO_SUCCESS);
+            logger.info("Benutzer: " + username + " erstellt.");
+        } catch (IllegalStateException e) {
+            showNotification(Notification.Position.BOTTOM_END, "Dieser Benutzername existiert schon", NotificationVariant.LUMO_ERROR);
+            logger.error("Benutzer: " + username + " existiert schon.");
+        } catch (Exception e) {
+            showNotification(Notification.Position.BOTTOM_END, "Irgendwas lief schief", NotificationVariant.LUMO_ERROR);
+            logger.error("Fehler beim Erstellen von Benutzer: " + e.getMessage());
         }
     }
 
