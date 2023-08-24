@@ -72,17 +72,11 @@ public class MainView extends AppLayout {
     private Component createDrawerContent(Tabs menu) {
         VerticalLayout layout = new VerticalLayout();
         H2 topMenu = new H2("Menü");
-        topMenu.addClassNames("menu-titel",
-                LumoUtility.Margin.Bottom.MEDIUM,
-                LumoUtility.FontSize.LARGE,
-                LumoUtility.Margin.Top.LARGE
-        );
+        topMenu.addClassNames("menu-titel");
         layout.add(topMenu);
-
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
-        layout.getThemeList().set("spacing-s", true);
         layout.setAlignItems(FlexComponent.Alignment.STRETCH);
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
 
