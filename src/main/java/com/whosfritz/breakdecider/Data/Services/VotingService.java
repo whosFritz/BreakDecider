@@ -14,10 +14,10 @@ public class VotingService {
     }
 
 
-    public void handleVote(Entscheidung entscheidung,
-                           LocalDateTime localDateTime,
-                           BreakDeciderUser authenticatedUser,
-                           Abstimmungsthema abstimmungsthema
+    public Abstimmungsthema handleVote(Entscheidung entscheidung,
+                                       LocalDateTime localDateTime,
+                                       BreakDeciderUser authenticatedUser,
+                                       Abstimmungsthema abstimmungsthema
     ) {
         Stimmzettel neuerStimmzettel = getOldStimmzettel(authenticatedUser, abstimmungsthema);
         if (neuerStimmzettel == null) {
@@ -28,7 +28,7 @@ public class VotingService {
         }
         neuerStimmzettel.setEntscheidung(entscheidung);
         neuerStimmzettel.setStimmabgabedatum(localDateTime);
-        abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
+        return abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
     }
 
     private Stimmzettel getOldStimmzettel(BreakDeciderUser authenticatedUser, Abstimmungsthema abstimmungsthema) {

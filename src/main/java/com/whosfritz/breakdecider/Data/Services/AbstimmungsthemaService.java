@@ -12,9 +12,11 @@ import java.util.List;
 @Getter
 public class AbstimmungsthemaService {
     private final AbstimmungsthemaRepository abstimmungsthemaRepository;
+    private final StimmzettelService stimmzettelservice;
 
-    public AbstimmungsthemaService(AbstimmungsthemaRepository abstimmungsthemaRepository) {
+    public AbstimmungsthemaService(AbstimmungsthemaRepository abstimmungsthemaRepository, StimmzettelService stimmzettelservice) {
         this.abstimmungsthemaRepository = abstimmungsthemaRepository;
+        this.stimmzettelservice = stimmzettelservice;
     }
 
 
@@ -35,6 +37,14 @@ public class AbstimmungsthemaService {
     public void closeAbstimmungsthema(Abstimmungsthema abstimmungsthema) {
         abstimmungsthema.setStatus(Status.CLOSED);
         saveAbstimmungsthema(abstimmungsthema);
+    }
+
+    public void deleteAbstimmungsthema(Abstimmungsthema abstimmungsthema) {
+        abstimmungsthema.getStimmzettelSet().forEach(stimmzettel -> {
+            stimmzettel.setAbstimmungsthema(null);
+            stimmzettelservice.deleteStimmzettelById(stimmzettel.getId());
+        });
+        abstimmungsthemaRepository.delete(abstimmungsthema);
     }
 
 
