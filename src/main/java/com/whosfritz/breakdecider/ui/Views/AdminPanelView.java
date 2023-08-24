@@ -141,7 +141,6 @@ public class AdminPanelView extends VerticalLayout {
                 }
 
             });
-
             return statusComboBox;
         }).setHeader("Status").setResizable(true);
 
