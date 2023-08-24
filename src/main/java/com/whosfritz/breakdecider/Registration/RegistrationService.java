@@ -19,7 +19,7 @@ public class RegistrationService {
         this.breakDeciderUserService = breakDeciderUserService;
     }
 
-    public void register(RegistrationRequest request) {
+    public BreakDeciderUser register(RegistrationRequest request) {
         if (request.getSecret_token() == null)
             throw new InvalidTokenException("Token ist ungültig");
         if (!request.getSecret_token().equals(REGISTRATION_TOKEN)) {
@@ -34,6 +34,6 @@ public class RegistrationService {
                 request.getAppUserRole(),
                 false,
                 true);
-        breakDeciderUserService.save(breakDeciderUser);
+        return breakDeciderUserService.save(breakDeciderUser);
     }
 }
