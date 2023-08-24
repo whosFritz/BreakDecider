@@ -63,8 +63,8 @@ public class BreakDeciderUserService implements UserDetailsService {
     }
 
 
-    public void save(BreakDeciderUser breakDeciderUser) {
-        breakDeciderUserRepository.save(breakDeciderUser);
+    public BreakDeciderUser save(BreakDeciderUser breakDeciderUser) {
+        return breakDeciderUserRepository.save(breakDeciderUser);
     }
 
 
