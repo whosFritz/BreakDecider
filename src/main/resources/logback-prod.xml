@@ -1,6 +1,5 @@
 <configuration>
     <appender name="fileAppender" class="ch.qos.logback.core.FileAppender">
-        <!--        <file>break-decider.log</file>-->
         <file>/var/log/break-decider.log</file>
         <encoder>
             <pattern>%date [%thread] %-5level %logger{36} - %msg%n</pattern>

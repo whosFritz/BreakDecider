@@ -27,9 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.List;
-
 import static com.whosfritz.breakdecider.Registration.SecretRegistrationToken.REGISTRATION_TOKEN;
+import static com.whosfritz.breakdecider.ui.utils.formatDateString;
 import static com.whosfritz.breakdecider.ui.utils.showNotification;
 
 @RolesAllowed("ROLE_ADMIN")
@@ -38,21 +37,18 @@ import static com.whosfritz.breakdecider.ui.utils.showNotification;
 public class AdminPanelView extends VerticalLayout {
     private final BreakDeciderUserService breakDeciderUserService;
     private final RegistrationService registrationService;
-    private final AbstimmungsthemaService abstimmungsthemaService;
     private final SecurityService securityService;
     private final TextField usernameTF = new TextField();
     private final PasswordField passwordPF = new PasswordField();
     private final ComboBox<AppUserRole> appUserRoleCB = new ComboBox<>();
-    private final Grid<BreakDeciderUser> breakDeciderUserGrid = new Grid<>(BreakDeciderUser.class);
-    private final Grid<Abstimmungsthema> abstimmungsthemaGrid = new Grid<>(Abstimmungsthema.class);
-
+    private final Grid<BreakDeciderUser> breakDeciderUserGrid = new Grid<>();
+    private final Grid<Abstimmungsthema> abstimmungsthemaGridAdmin = new Grid<>();
     private final Logger logger = LoggerFactory.getLogger(AdminPanelView.class);
 
 
     public AdminPanelView(BreakDeciderUserService breakDeciderUserService, RegistrationService registrationService, AbstimmungsthemaService abstimmungsthemaService, SecurityService securityService) {
         this.breakDeciderUserService = breakDeciderUserService;
         this.registrationService = registrationService;
-        this.abstimmungsthemaService = abstimmungsthemaService;
         this.securityService = securityService;
         // formlayout with two input fields to create a user with username and password
         // grid to show all users
@@ -68,12 +64,14 @@ public class AdminPanelView extends VerticalLayout {
         createUserButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         createUserButton.addClickListener(event -> createUser());
 
-        breakDeciderUserGrid.setColumns("username", "appUserRole", "locked");
         breakDeciderUserGrid.setItems(breakDeciderUserService.getAllUsers());
-        breakDeciderUserGrid.getColumnByKey("username").setHeader("Beschreibung").setSortable(true);
-        breakDeciderUserGrid.getColumnByKey("appUserRole").setHeader("Rolle").setSortable(true);
-        breakDeciderUserGrid.getColumnByKey("locked").setHeader("Locked").setSortable(true);
+        breakDeciderUserGrid.getColumns().forEach(breakDeciderUserColumn -> breakDeciderUserColumn.setAutoWidth(true));
         breakDeciderUserGrid.setSelectionMode(Grid.SelectionMode.MULTI);
+
+        breakDeciderUserGrid.addColumn(BreakDeciderUser::getUsername).setHeader("Benutzername").setSortable(true).setResizable(true);
+        breakDeciderUserGrid.addColumn(BreakDeciderUser::getAppUserRole).setHeader("Rolle").setSortable(true).setResizable(true);
+        breakDeciderUserGrid.addColumn(BreakDeciderUser::getLocked).setHeader("Locked").setSortable(true).setResizable(true);
+
         breakDeciderUserGrid.addItemClickListener(event -> {
             if (breakDeciderUserGrid.getSelectedItems().contains(event.getItem())) {
                 breakDeciderUserGrid.deselect(event.getItem());
@@ -102,7 +100,7 @@ public class AdminPanelView extends VerticalLayout {
                 }
             });
             return enabledComboBox;
-        }).setHeader("Enabled");
+        }).setHeader("Enabled").setResizable(true);
 
 
         Button deleteUsersButton = new Button("Benutzer löschen");
@@ -111,22 +109,18 @@ public class AdminPanelView extends VerticalLayout {
             breakDeciderUserGrid.getSelectedItems().forEach(this::handleDeletion);
             breakDeciderUserGrid.setItems(breakDeciderUserService.getAllUsers());
         });
-        add(paragraph, formLayout, breakDeciderUserGrid, deleteUsersButton);
 
 
-        List<Abstimmungsthema> abstimmungsthemenList = abstimmungsthemaService.getAllAbstimmungsthemen(); // Get the list of Abstimmungsthemen from the service
-        abstimmungsthemaGrid.setColumns("titel", "beschreibung", "ersteller", "erstelldatum");
-
+        abstimmungsthemaGridAdmin.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
+        abstimmungsthemaGridAdmin.setItems(abstimmungsthemaService.getAllAbstimmungsthemen());
         // Set the column headers
-        abstimmungsthemaGrid.getColumnByKey("ersteller").setHeader("Ersteller").setSortable(true);
-        abstimmungsthemaGrid.getColumnByKey("erstelldatum").setHeader("Erstelldatum").setSortable(true);
-        abstimmungsthemaGrid.getColumnByKey("titel").setHeader("Titel").setSortable(true);
-        abstimmungsthemaGrid.getColumnByKey("beschreibung").setHeader("Beschreibung").setSortable(true);
-        // Add a custom column for the "Yes" button
-        // show 2 buttons in one column (yes and no)
 
+        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getTitel).setHeader("Titel").setSortable(true).setResizable(true);
+        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true).setResizable(true);
+        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller").setSortable(true).setResizable(true);
+        abstimmungsthemaGridAdmin.addColumn(abstimmungsthema -> formatDateString(abstimmungsthema.getErstelldatum().toString())).setHeader("Erstellungsdatum").setSortable(true).setResizable(true);
 
-        abstimmungsthemaGrid.addComponentColumn(abstimmungsthema -> {
+        abstimmungsthemaGridAdmin.addComponentColumn(abstimmungsthema -> {
             ComboBox<Status> statusComboBox = new ComboBox<>();
             statusComboBox.setItems(Status.OPEN, Status.CLOSED);
             statusComboBox.setValue(abstimmungsthema.getStatus());
@@ -137,29 +131,21 @@ public class AdminPanelView extends VerticalLayout {
                         abstimmungsthemaService.closeAbstimmungsthema(abstimmungsthema);
                         showNotification(Notification.Position.BOTTOM_END, "Abstimmung geschlossen", NotificationVariant.LUMO_SUCCESS);
                         logger.info("Abstimmung mit Titel: " + abstimmungsthema.getTitel() + " geschlossen von: " + this.securityService.getAuthenticatedUser().getUsername());
-                        abstimmungsthemaGrid.getDataProvider().refreshItem(abstimmungsthema);
+                        abstimmungsthemaGridAdmin.getDataProvider().refreshItem(abstimmungsthema);
                     } else {
                         abstimmungsthemaService.openAbstimmungsthema(abstimmungsthema);
                         showNotification(Notification.Position.BOTTOM_END, "Wieder eröffnet Abstimmung geöffnet", NotificationVariant.LUMO_SUCCESS);
                         logger.info("Abstimmung mit Titel: " + abstimmungsthema.getTitel() + " wurde geöffnet von: " + this.securityService.getAuthenticatedUser().getUsername());
-                        abstimmungsthemaGrid.getDataProvider().refreshItem(abstimmungsthema);
+                        abstimmungsthemaGridAdmin.getDataProvider().refreshItem(abstimmungsthema);
                     }
                 }
 
             });
 
             return statusComboBox;
-        }).setHeader("Status");
+        }).setHeader("Status").setResizable(true);
 
-
-        abstimmungsthemaGrid.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
-
-
-        // Set the items (data) for the grid
-        abstimmungsthemaGrid.setItems(abstimmungsthemenList);
-
-
-        add(abstimmungsthemaGrid);
+        add(paragraph, formLayout, breakDeciderUserGrid, deleteUsersButton, abstimmungsthemaGridAdmin);
     }
 
     private void createUser() {
