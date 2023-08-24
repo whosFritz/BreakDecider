@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+import static com.whosfritz.breakdecider.ui.utils.formatDateString;
 import static com.whosfritz.breakdecider.ui.utils.showNotification;
 
 @PermitAll
@@ -31,86 +31,69 @@ import static com.whosfritz.breakdecider.ui.utils.showNotification;
 public class AbstimmungenView extends VerticalLayout {
     private final SecurityService securityService;
     private final VotingService votingService;
-    private final AbstimmungsthemaService abstimmungsthemaService;
     private final Logger logger = LoggerFactory.getLogger(AbstimmungenView.class);
-    private Grid<Abstimmungsthema> list = new Grid<>(Abstimmungsthema.class);
+    private final Grid<Abstimmungsthema> abstimmungsthemaGrid = new Grid<>();
 
     public AbstimmungenView(SecurityService securityService, VotingService votingService, AbstimmungsthemaService abstimmungsthemaService) {
         this.securityService = securityService;
         this.votingService = votingService;
-        this.abstimmungsthemaService = abstimmungsthemaService;
+
+        abstimmungsthemaGrid.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
+        abstimmungsthemaGrid.setItems(abstimmungsthemaService.getAllAbstimmungsthemen());
+
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getStatus).setHeader("Status").setSortable(true).setResizable(true);
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getTitel).setHeader("Titel").setSortable(true).setResizable(true);
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller").setSortable(true).setResizable(true);
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true).setResizable(true);
+
+        abstimmungsthemaGrid.addColumn(abstimmungsthema -> formatDateString(abstimmungsthema.getErstelldatum().toString())).setHeader("Erstellungsdatum").setSortable(true).setResizable(true);
+
+        abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.JA))
+                .setHeader("Ja").setResizable(true);
+        abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.NEIN))
+                .setHeader("Nein").setResizable(true);
 
 
-        List<Abstimmungsthema> abstimmungsthemenList = abstimmungsthemaService.getAllAbstimmungsthemen(); // Get the list of Abstimmungsthemen from the service
-        list.setColumns("status", "titel", "beschreibung", "ersteller", "erstelldatum");
-
-        // Set the column headers
-        list.getColumnByKey("ersteller").setHeader("Ersteller").setSortable(true);
-        list.getColumnByKey("erstelldatum").setHeader("Erstelldatum").setSortable(true);
-        list.getColumnByKey("status").setHeader("Status").setSortable(true);
-        list.getColumnByKey("titel").setHeader("Titel").setSortable(true);
-        list.getColumnByKey("beschreibung").setHeader("Beschreibung").setSortable(true);
-        // Add a custom column for the "Yes" count
-        list.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.JA))
-                .setHeader("Ja");
-        // Add a custom column for the "No" count
-        list.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.NEIN))
-                .setHeader("Nein");
-        // Add a custom column for the "Yes" button
-        // show 2 buttons in one column (yes and no)
-
-
-        list.addComponentColumn(abstimmungsthema -> {
+        abstimmungsthemaGrid.addComponentColumn(abstimmungsthema -> {
             HorizontalLayout layout = new HorizontalLayout();
-            Button yesButton = new Button("Ja", event -> {
-                handleInput(Entscheidung.JA, abstimmungsthema);
-            });
+            Button yesButton = new Button("Ja", event -> handleInput(Entscheidung.JA, abstimmungsthema));
             yesButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_PRIMARY);
             yesButton.setEnabled(enableButtons(abstimmungsthema));
             layout.add(yesButton);
 
-            Button noButton = new Button("Nein", event -> {
-                handleInput(Entscheidung.NEIN, abstimmungsthema);
-            });
+            Button noButton = new Button("Nein", event -> handleInput(Entscheidung.NEIN, abstimmungsthema));
             noButton.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY);
             noButton.setEnabled(enableButtons(abstimmungsthema));
             layout.add(noButton);
 
             return layout;
-        }).setHeader("Abstimmen");
+        }).setHeader("Abstimmen").setResizable(true);
 
 
-        list.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
-
-
-        // Set the items (data) for the grid
-        list.setItems(abstimmungsthemenList);
-
-
-        add(list);
+        add(abstimmungsthemaGrid);
     }
 
     private void handleInput(
             Entscheidung entscheidung,
             Abstimmungsthema abstimmungsthema
     ) {
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         if (entscheidung.equals(Entscheidung.JA)) {
             try {
-                votingService.handleVote(entscheidung, localDateTime, securityService.getAuthenticatedUser(), abstimmungsthema);
+                votingService.handleVote(entscheidung, now, securityService.getAuthenticatedUser(), abstimmungsthema);
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
                 logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat für das Thema " + abstimmungsthema.getTitel() + " mit JA abgestimmt.");
-                list.getDataProvider().refreshItem(abstimmungsthema);
+                abstimmungsthemaGrid.getDataProvider().refreshItem(abstimmungsthema);
             } catch (Exception e) {
                 showNotification(Notification.Position.BOTTOM_END, "Fehler beim Ja-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Ja-Abstimmen: " + e.getMessage());
             }
         } else {
             try {
-                votingService.handleVote(entscheidung, localDateTime, securityService.getAuthenticatedUser(), abstimmungsthema);
+                votingService.handleVote(entscheidung, now, securityService.getAuthenticatedUser(), abstimmungsthema);
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
                 logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat für das Thema " + abstimmungsthema.getTitel() + " mit NEIN abgestimmt.");
-                list.getDataProvider().refreshItem(abstimmungsthema);
+                abstimmungsthemaGrid.getDataProvider().refreshItem(abstimmungsthema);
             } catch (Exception e) {
                 showNotification(Notification.Position.BOTTOM_END, "Fehler beim Nein-Abstimmen", NotificationVariant.LUMO_ERROR);
                 logger.error("Fehler beim Nein-Abstimmen: " + e.getMessage());
@@ -130,9 +113,7 @@ public class AbstimmungenView extends VerticalLayout {
     }
 
     private boolean enableButtons(Abstimmungsthema abstimmungsthema) {
-        if (abstimmungsthema.getStatus() == Status.CLOSED) {
-            return false;
-        }
-        return true;
+        return abstimmungsthema.getStatus() != Status.CLOSED;
     }
+
 }

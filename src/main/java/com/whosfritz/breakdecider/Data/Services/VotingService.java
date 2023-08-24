@@ -1,8 +1,6 @@
 package com.whosfritz.breakdecider.Data.Services;
 
 import com.whosfritz.breakdecider.Data.Entities.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,7 +8,6 @@ import java.time.LocalDateTime;
 @Service
 public class VotingService {
     private final AbstimmungsthemaService abstimmungsthemaService;
-    private final Logger logger = LoggerFactory.getLogger(VotingService.class);
 
     public VotingService(AbstimmungsthemaService abstimmungsthemaService) {
         this.abstimmungsthemaService = abstimmungsthemaService;
