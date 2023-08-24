@@ -1,5 +1,6 @@
 package com.whosfritz.breakdecider.ui.Views;
 
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -46,6 +47,7 @@ public class CreateAbstimmungView extends VerticalLayout {
         beschreibungTF.setPlaceholder("Sind Urlaubsbilder in der Cloud sicher?");
         beschreibungTF.setSizeFull();
         Button createButton = new Button("Erstellen");
+        createButton.addClickShortcut(Key.ENTER);
         createButton.addClickListener(buttonClickEvent -> {
             // check if fields are not empty
             if (titelTF.getValue().isEmpty() || beschreibungTF.getValue().isEmpty()) {
