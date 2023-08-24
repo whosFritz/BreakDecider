@@ -184,9 +184,7 @@ public class AdminPanelView extends VerticalLayout {
             enabledColumn.setFooter(createEnabledFooter(breakDeciderUserGridDataProvider.getItems()));
         });
 
-        abstimmungsthemaListDataProvider.addDataProviderListener(event -> {
-            statusColumn.setFooter(createStatusFooter(abstimmungsthemaListDataProvider.getItems()));
-        });
+        abstimmungsthemaListDataProvider.addDataProviderListener(event -> statusColumn.setFooter(createStatusFooter(abstimmungsthemaListDataProvider.getItems())));
 
         add(paragraph, formLayout, breakDeciderUserGrid, abstimmungsthemaGridAdmin, deleteAbstimmungButton);
     }

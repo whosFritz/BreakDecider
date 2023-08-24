@@ -115,9 +115,7 @@ public class MainView extends AppLayout {
     private void createHeader() {
         H2 logo = new H2("BreakDecider");
         logo.addClassNames(LumoUtility.FontSize.XLARGE, LumoUtility.Margin.MEDIUM);
-        Button logoutButton = new Button("Logout", event -> {
-            securityService.logout();
-        });
+        Button logoutButton = new Button("Logout", event -> securityService.logout());
         logoutButton.addClassName("logout-button");
         logoutButton.setTooltipText("Hier kannst du dich ausloggen.");
 

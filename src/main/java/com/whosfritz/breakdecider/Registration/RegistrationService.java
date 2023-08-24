@@ -28,12 +28,12 @@ public class RegistrationService {
         if (breakDeciderUserService.userExists(request.getUsername())) {
             throw new IllegalStateException("Benutzername schon vergeben");
         }
-        BreakDeciderUser breakDeciderUser = new BreakDeciderUser(
-                request.getUsername(),
-                bCryptPasswordEncoder.encode(request.getPassword()),
-                request.getAppUserRole(),
-                false,
-                true);
+        BreakDeciderUser breakDeciderUser = new BreakDeciderUser();
+        breakDeciderUser.setUsername(request.getUsername());
+        breakDeciderUser.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
+        breakDeciderUser.setAppUserRole(request.getAppUserRole());
+        breakDeciderUser.setLocked(false);
+        breakDeciderUser.setEnabled(true);
         return breakDeciderUserService.save(breakDeciderUser);
     }
 }

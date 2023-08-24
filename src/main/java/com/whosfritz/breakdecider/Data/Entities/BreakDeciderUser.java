@@ -39,19 +39,6 @@ public class BreakDeciderUser implements UserDetails {
     private Set<Stimmzettel> stimmzettelSet = new HashSet<>();
 
 
-    public BreakDeciderUser(String username,
-                            String password,
-                            AppUserRole appUserRole,
-                            Boolean locked,
-                            Boolean enabled) {
-        this.username = username;
-        this.password = password;
-        this.appUserRole = appUserRole;
-        this.locked = locked;
-        this.enabled = enabled;
-    }
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(appUserRole.name());

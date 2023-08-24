@@ -36,14 +36,13 @@ public class AbstimmungenView extends VerticalLayout {
     private final AbstimmungsthemaService abstimmungsthemaService;
     private final Logger logger = LoggerFactory.getLogger(AbstimmungenView.class);
     private final Grid<Abstimmungsthema> abstimmungsthemaGrid = new Grid<>();
-    private final ListDataProvider<Abstimmungsthema> listDataProvider;
 
     public AbstimmungenView(SecurityService securityService, VotingService votingService, AbstimmungsthemaService abstimmungsthemaService) {
         this.securityService = securityService;
         this.votingService = votingService;
         this.abstimmungsthemaService = abstimmungsthemaService;
 
-        listDataProvider = DataProvider.ofCollection(abstimmungsthemaService.getAllAbstimmungsthemen());
+        ListDataProvider<Abstimmungsthema> listDataProvider = DataProvider.ofCollection(abstimmungsthemaService.getAllAbstimmungsthemen());
         abstimmungsthemaGrid.setDataProvider(listDataProvider);
 
         abstimmungsthemaGrid.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
