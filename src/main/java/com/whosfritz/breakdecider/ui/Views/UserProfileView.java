@@ -42,18 +42,21 @@ public class UserProfileView extends VerticalLayout {
         formLayout.addFormItem(repeatPasswordField, "Neues Passwort wiederholen");
         formLayout.addFormItem(submitButton, "Passwort ändern");
 
+        submitButton.setEnabled(false);
+        newPasswordField.addValueChangeListener(valueChangeEvent -> submitButton.setEnabled(!newPasswordField.getValue().isEmpty() && !repeatPasswordField.getValue().isEmpty() && !oldPasswordField.getValue().isEmpty()));
+        repeatPasswordField.addValueChangeListener(valueChangeEvent -> submitButton.setEnabled(!newPasswordField.getValue().isEmpty() && !repeatPasswordField.getValue().isEmpty() && !oldPasswordField.getValue().isEmpty()));
+        oldPasswordField.addValueChangeListener(valueChangeEvent -> submitButton.setEnabled(!newPasswordField.getValue().isEmpty() && !repeatPasswordField.getValue().isEmpty() && !oldPasswordField.getValue().isEmpty()));
+
 
         submitButton.addClickListener(event -> {
             String oldPasswordString = oldPasswordField.getValue();
             String newPassword = newPasswordField.getValue();
             String repeatPassword = repeatPasswordField.getValue();
-            newPasswordField.setErrorMessage("Das neue Passwort darf nicht leer sein.");
 
             // Check if the passwords match
             if (newPassword.equals(repeatPassword)) {
                 pressUpdateButton(securityService.getAuthenticatedUser(), oldPasswordString, newPassword);
             } else {
-                // Show an error notification
                 showNotification(Notification.Position.BOTTOM_CENTER, "Die Passwörter stimmen nicht überein.", NotificationVariant.LUMO_ERROR);
             }
         });
