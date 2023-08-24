@@ -57,6 +57,14 @@ public class CreateAbstimmungView extends VerticalLayout {
                 showNotification(Notification.Position.BOTTOM_END, "Bitte einloggen", NotificationVariant.LUMO_ERROR);
                 return;
             }
+            if (titelTF.getValue().length() > 50) {
+                showNotification(Notification.Position.BOTTOM_END, "Titel darf nicht länger als 50 Zeichen sein", NotificationVariant.LUMO_ERROR);
+                return;
+            }
+            if (beschreibungTF.getValue().length() > 150) {
+                showNotification(Notification.Position.BOTTOM_END, "Beschreibung darf nicht länger als 150 Zeichen sein", NotificationVariant.LUMO_ERROR);
+                return;
+            }
             // create voting
             try {
                 votingService.handleCreateAbstimmung(
@@ -77,9 +85,8 @@ public class CreateAbstimmungView extends VerticalLayout {
 
 
         VerticalLayout layout = new VerticalLayout();
-        layout.addClassName("create-abstimmung-form");
-        layout.setMaxWidth("500px");
-        layout.setMinWidth("500px");
+        layout.setMaxWidth("700px");
+        layout.setMinWidth("700px");
         layout.setAlignItems(Alignment.CENTER);
         layout.setJustifyContentMode(JustifyContentMode.CENTER);
         layout.add(
