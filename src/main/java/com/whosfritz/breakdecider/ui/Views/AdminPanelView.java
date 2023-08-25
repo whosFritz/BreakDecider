@@ -247,13 +247,13 @@ public class AdminPanelView extends VerticalLayout {
             logger.info("Benutzer: " + breakDeciderUser.getUsername() + " gelöscht.");
         } catch (NullPointerException exception) {
             showNotification(Notification.Position.BOTTOM_END, "Benutzer konnte nicht gelöscht werden", NotificationVariant.LUMO_ERROR);
-            logger.error("Benutzer konnte nicht gelöscht werden: " + exception);
-        } catch (DataIntegrityViolationException e) {
+            logger.error("Benutzer konnte nicht gelöscht werden: " + exception.getMessage());
+        } catch (DataIntegrityViolationException dataIntegrityViolationException) {
             showNotification(Notification.Position.BOTTOM_END, "Benutzer konnte SQL mäßig nicht gelöscht werden", NotificationVariant.LUMO_ERROR);
-            logger.error("Benutzer konnte nicht gelöscht werden: " + e);
-        } catch (Exception e) {
+            logger.error("Benutzer konnte nicht gelöscht werden: " + dataIntegrityViolationException.getMessage());
+        } catch (Exception exception) {
             showNotification(Notification.Position.BOTTOM_END, "Irgendwas lief schief", NotificationVariant.LUMO_ERROR);
-            logger.error("Es trat ein Fehler auf: " + e);
+            logger.error("Es trat ein Fehler auf: " + exception.getMessage());
         }
     }
 

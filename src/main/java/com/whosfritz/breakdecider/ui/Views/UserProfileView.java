@@ -74,8 +74,8 @@ public class UserProfileView extends VerticalLayout {
         } catch (PasswordIncorrectException e) {
             logger.error("Alte Password ist falsch von: " + breakDeciderUser.getUsername());
             showNotification(Notification.Position.BOTTOM_CENTER, "Falsches Password.", NotificationVariant.LUMO_ERROR);
-        } catch (UsernameNotFoundException e) {
-            logger.error("Benutzer nicht gefunden: " + breakDeciderUser.getUsername(), e);
+        } catch (UsernameNotFoundException usernameNotFoundException) {
+            logger.error("Benutzer nicht gefunden: " + breakDeciderUser.getUsername(), usernameNotFoundException.getMessage());
             showNotification(Notification.Position.BOTTOM_CENTER, "Benutzer nicht gefunden.", NotificationVariant.LUMO_ERROR);
         } catch (NullPointerException e) {
             logger.error("Neue Passwort ist null von Benutzer: " + breakDeciderUser.getUsername());
