@@ -8,9 +8,11 @@ import java.time.LocalDateTime;
 @Service
 public class VotingService {
     private final AbstimmungsthemaService abstimmungsthemaService;
+    private final StimmzettelService stimmzettelService;
 
-    public VotingService(AbstimmungsthemaService abstimmungsthemaService) {
+    public VotingService(AbstimmungsthemaService abstimmungsthemaService, StimmzettelService stimmzettelService) {
         this.abstimmungsthemaService = abstimmungsthemaService;
+        this.stimmzettelService = stimmzettelService;
     }
 
 
@@ -20,6 +22,14 @@ public class VotingService {
                                        Abstimmungsthema abstimmungsthema
     ) {
         Stimmzettel neuerStimmzettel = getOldStimmzettel(authenticatedUser, abstimmungsthema);
+
+        // if a user has already voted for the same Entscheidung, remove the vote
+        if (neuerStimmzettel != null && neuerStimmzettel.getEntscheidung().equals(entscheidung)) {
+            abstimmungsthema.getStimmzettelSet().remove(getOldStimmzettel(authenticatedUser, abstimmungsthema));
+            stimmzettelService.deleteStimmzettelById(neuerStimmzettel.getId());
+            return abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
+        }
+
         if (neuerStimmzettel == null) {
             neuerStimmzettel = new Stimmzettel();
             neuerStimmzettel.setBreakDeciderUser(authenticatedUser);
