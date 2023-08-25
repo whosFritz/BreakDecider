@@ -36,6 +36,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Locale;
 
 import static com.whosfritz.breakdecider.Registration.SecretRegistrationToken.REGISTRATION_TOKEN;
 import static com.whosfritz.breakdecider.ui.utils.showNotification;
@@ -131,7 +132,7 @@ public class AdminPanelView extends VerticalLayout {
         abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getTitel).setHeader("Titel").setSortable(true);
         abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true);
         abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller").setSortable(true);
-        abstimmungsthemaGridAdmin.addColumn(new LocalDateTimeRenderer<>(Abstimmungsthema::getErstelldatum, () -> DateTimeFormatter.ofPattern("EEEE H:mm 'Uhr', dd. MMMM yyyy"))).setHeader("Erstellungsdatum").setSortable(true);
+        abstimmungsthemaGridAdmin.addColumn(new LocalDateTimeRenderer<>(Abstimmungsthema::getErstelldatum, () -> DateTimeFormatter.ofPattern("EEEE H:mm 'Uhr', dd. MMMM yyyy", Locale.GERMANY))).setHeader("Erstellungsdatum").setSortable(true);
 
         Grid.Column<Abstimmungsthema> statusColumn = abstimmungsthemaGridAdmin.addComponentColumn(abstimmungsthema -> {
             ComboBox<Status> statusComboBox = new ComboBox<>();

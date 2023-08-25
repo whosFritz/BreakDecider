@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import static com.whosfritz.breakdecider.ui.utils.showNotification;
 
@@ -55,7 +56,7 @@ public class AbstimmungenView extends VerticalLayout {
         abstimmungsthemaGrid.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller").setSortable(true);
         abstimmungsthemaGrid.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true);
 
-        abstimmungsthemaGrid.addColumn(new LocalDateTimeRenderer<>(Abstimmungsthema::getErstelldatum, () -> DateTimeFormatter.ofPattern("EEEE H:mm 'Uhr', dd. MMMM yyyy"))).setHeader("Erstellungsdatum").setSortable(true);
+        abstimmungsthemaGrid.addColumn(new LocalDateTimeRenderer<>(Abstimmungsthema::getErstelldatum, () -> DateTimeFormatter.ofPattern("EEEE H:mm 'Uhr', dd. MMMM yyyy", Locale.GERMANY))).setHeader("Erstellungsdatum").setSortable(true);
         abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.JA)).setHeader("Ja").setTextAlign(ColumnTextAlign.CENTER);
         abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.NEIN)).setHeader("Nein").setTextAlign(ColumnTextAlign.CENTER);
         abstimmungsthemaGrid.addComponentColumn(abstimmungsthema -> {
