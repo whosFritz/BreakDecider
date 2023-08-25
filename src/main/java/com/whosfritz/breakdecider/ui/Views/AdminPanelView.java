@@ -205,17 +205,13 @@ public class AdminPanelView extends VerticalLayout {
 
     private static String createEnabledFooter(Collection<BreakDeciderUser> breakDeciderUsers) {
         long enabled = breakDeciderUsers.stream().filter(BreakDeciderUser::isEnabled).count();
-
         long disabled = breakDeciderUsers.stream().filter(breakDeciderUser -> !breakDeciderUser.isEnabled()).count();
-
         return String.format("%s enabled, %s disabled", enabled, disabled);
     }
 
     private static String createStatusFooter(Collection<Abstimmungsthema> abstimmungsthemen) {
         long open = abstimmungsthemen.stream().filter(abstimmungsthema -> Status.OPEN.equals(abstimmungsthema.getStatus())).count();
         long closed = abstimmungsthemen.stream().filter(abstimmungsthema -> Status.CLOSED.equals(abstimmungsthema.getStatus())).count();
-
-
         return String.format("%s offen, %s geschlossen", open, closed);
     }
 
