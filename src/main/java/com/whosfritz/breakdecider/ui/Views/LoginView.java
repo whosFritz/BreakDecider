@@ -12,6 +12,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 @Route("login")
 @PageTitle("Login | BreakDecider")
@@ -21,7 +22,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
     private final Logger logger = LoggerFactory.getLogger(LoginView.class);
 
 
-    public LoginView() {
+    public LoginView(@Value("${info.app.developer.name}") String adminName) {
         addClassName("login-view");
         setSizeFull();
         setAlignItems(Alignment.CENTER);
@@ -46,7 +47,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
 
         loginForm.setAction("login");
         loginForm.setForgotPasswordButtonVisible(true);
-        loginForm.addForgotPasswordListener(event -> Notification.show("Wenden Sie sich dafür bitte an Fritz Schubert.❤️"));
+        loginForm.addForgotPasswordListener(event -> Notification.show("Wenden Sie sich dafür bitte an " + adminName + ".❤️"));
         loginForm.addLoginListener(event -> logger.info("Benutzer versuchte sich einzuloggen mit Benutzername: " + event.getUsername()));
         loginForm.setI18n(i18n);
         Image image = new Image("images/img-login.png", "LOGO");
