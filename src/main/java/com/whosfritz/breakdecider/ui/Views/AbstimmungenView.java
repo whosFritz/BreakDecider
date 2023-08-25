@@ -101,9 +101,13 @@ public class AbstimmungenView extends VerticalLayout {
             Abstimmungsthema abstimmungsthema
     ) {
         try {
-            votingService.handleVote(entscheidung, LocalDateTime.now(), securityService.getAuthenticatedUser(), abstimmungsthema);
-            showNotification(Notification.Position.BOTTOM_END, "Stimme erfolgreich abgegeben", NotificationVariant.LUMO_SUCCESS);
-            logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat für das Thema " + abstimmungsthema.getTitel() + " mit " + entscheidung + " abgestimmt.");
+            String result = votingService.handleVote(entscheidung, LocalDateTime.now(), securityService.getAuthenticatedUser(), abstimmungsthema);
+            showNotification(Notification.Position.BOTTOM_END, result, NotificationVariant.LUMO_SUCCESS);
+            if (result.equals("Abstimmung wurde abgegeben")) {
+                logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat für das Thema " + abstimmungsthema.getTitel() + " mit " + entscheidung + " abgestimmt.");
+            } else {
+                logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat seine Abstimmung für das Thema " + abstimmungsthema.getTitel() + " zurückgezogen.");
+            }
             abstimmungsthemaGrid.setItems(abstimmungsthemaService.getAllAbstimmungsthemen());
         } catch (Exception e) {
             showNotification(Notification.Position.BOTTOM_END, "Fehler beim " + entscheidung + "-Abstimmen: ", NotificationVariant.LUMO_ERROR);

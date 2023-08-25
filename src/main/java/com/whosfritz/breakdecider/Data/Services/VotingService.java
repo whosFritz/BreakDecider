@@ -16,18 +16,18 @@ public class VotingService {
     }
 
 
-    public Abstimmungsthema handleVote(Entscheidung entscheidung,
-                                       LocalDateTime localDateTime,
-                                       BreakDeciderUser authenticatedUser,
-                                       Abstimmungsthema abstimmungsthema
+    public String handleVote(Entscheidung entscheidung,
+                             LocalDateTime localDateTime,
+                             BreakDeciderUser authenticatedUser,
+                             Abstimmungsthema abstimmungsthema
     ) {
         Stimmzettel neuerStimmzettel = getOldStimmzettel(authenticatedUser, abstimmungsthema);
 
-        // if a user has already voted for the same Entscheidung, remove the vote
         if (neuerStimmzettel != null && neuerStimmzettel.getEntscheidung().equals(entscheidung)) {
             abstimmungsthema.getStimmzettelSet().remove(getOldStimmzettel(authenticatedUser, abstimmungsthema));
             stimmzettelService.deleteStimmzettelById(neuerStimmzettel.getId());
-            return abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
+            abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
+            return "Abstimmung wurde zurückgezogen";
         }
 
         if (neuerStimmzettel == null) {
@@ -38,7 +38,8 @@ public class VotingService {
         }
         neuerStimmzettel.setEntscheidung(entscheidung);
         neuerStimmzettel.setStimmabgabedatum(localDateTime);
-        return abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
+        abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
+        return "Abstimmung wurde abgegeben";
     }
 
     private Stimmzettel getOldStimmzettel(BreakDeciderUser authenticatedUser, Abstimmungsthema abstimmungsthema) {
