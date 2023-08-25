@@ -19,28 +19,31 @@ public class VotingService {
     public String handleVote(Entscheidung entscheidung,
                              LocalDateTime localDateTime,
                              BreakDeciderUser authenticatedUser,
-                             Abstimmungsthema abstimmungsthema
-    ) {
+                             Abstimmungsthema abstimmungsthema) {
         Stimmzettel neuerStimmzettel = getOldStimmzettel(authenticatedUser, abstimmungsthema);
 
-        if (neuerStimmzettel != null && neuerStimmzettel.getEntscheidung().equals(entscheidung)) {
-            abstimmungsthema.getStimmzettelSet().remove(getOldStimmzettel(authenticatedUser, abstimmungsthema));
-            stimmzettelService.deleteStimmzettelById(neuerStimmzettel.getId());
-            abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
-            return "Abstimmung wurde zurückgezogen";
-        }
-
-        if (neuerStimmzettel == null) {
+        if (neuerStimmzettel != null) {
+            // neuerStimmzettel is not null => delete old Stimmzettel
+            if (neuerStimmzettel.getEntscheidung().equals(entscheidung)) {
+                abstimmungsthema.getStimmzettelSet().remove(neuerStimmzettel);
+                stimmzettelService.deleteStimmzettelById(neuerStimmzettel.getId());
+                abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
+                return "Stimme zurückgezogen";
+            }
+        } else {
+            // neuerStimmzettel is null => create new Stimmzettel
             neuerStimmzettel = new Stimmzettel();
             neuerStimmzettel.setBreakDeciderUser(authenticatedUser);
             neuerStimmzettel.setAbstimmungsthema(abstimmungsthema);
             abstimmungsthema.getStimmzettelSet().add(neuerStimmzettel);
         }
+        // set or switch Entscheidung
         neuerStimmzettel.setEntscheidung(entscheidung);
         neuerStimmzettel.setStimmabgabedatum(localDateTime);
         abstimmungsthemaService.saveAbstimmungsthema(abstimmungsthema);
-        return "Abstimmung wurde abgegeben";
+        return "Stimme abgegeben";
     }
+
 
     private Stimmzettel getOldStimmzettel(BreakDeciderUser authenticatedUser, Abstimmungsthema abstimmungsthema) {
         for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelSet()) {

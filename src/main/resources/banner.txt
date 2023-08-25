@@ -5,6 +5,6 @@
 |  |_)  | |  |\  \----.|  |____ /  _____  \  |  .  \  |  '--'  ||  |____ |  `----.|  | |  '--'  ||  |____ |  |\  \----.
 |______/  | _| `._____||_______/__/     \__\ |__|\__\ |_______/ |_______| \______||__| |_______/ |_______|| _| `._____|
 
-${info.app.name} | Version: ${info.app.version}
+${info.app.name} | Version: ${info.app.version} | Active Profile: ${spring.profiles.active}
 Developed by ${info.app.developer.name} | ${info.app.developer.email}
 Powered by Spring Boot ${spring-boot.version}

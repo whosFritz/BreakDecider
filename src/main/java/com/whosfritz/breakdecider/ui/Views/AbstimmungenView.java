@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.whosfritz.breakdecider.Data.Entities.Abstimmungsthema;
@@ -26,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-import static com.whosfritz.breakdecider.ui.utils.formatDateString;
 import static com.whosfritz.breakdecider.ui.utils.showNotification;
 
 @PermitAll
@@ -39,31 +40,24 @@ public class AbstimmungenView extends VerticalLayout {
     private final AbstimmungsthemaService abstimmungsthemaService;
     private final Logger logger = LoggerFactory.getLogger(AbstimmungenView.class);
     private final Grid<Abstimmungsthema> abstimmungsthemaGrid = new Grid<>();
-    private final ListDataProvider<Abstimmungsthema> listDataProvider;
 
     public AbstimmungenView(SecurityService securityService, VotingService votingService, AbstimmungsthemaService abstimmungsthemaService) {
         this.securityService = securityService;
         this.votingService = votingService;
         this.abstimmungsthemaService = abstimmungsthemaService;
 
-        listDataProvider = DataProvider.ofCollection(abstimmungsthemaService.getAllAbstimmungsthemen());
+        ListDataProvider<Abstimmungsthema> listDataProvider = DataProvider.ofCollection(abstimmungsthemaService.getAllAbstimmungsthemen());
         abstimmungsthemaGrid.setDataProvider(listDataProvider);
 
-        abstimmungsthemaGrid.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
 
-        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getStatus).setHeader("Status").setSortable(true).setResizable(true);
-        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getTitel).setHeader("Titel").setSortable(true).setResizable(true);
-        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller").setSortable(true).setResizable(true);
-        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true).setResizable(true);
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getStatus).setHeader("Status").setSortable(true);
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getTitel).setHeader("Titel").setSortable(true);
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller").setSortable(true);
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true);
 
-        abstimmungsthemaGrid.addColumn(abstimmungsthema -> formatDateString(abstimmungsthema.getErstelldatum().toString())).setHeader("Erstellungsdatum").setSortable(true).setResizable(true);
-        abstimmungsthemaGrid.addComponentColumn(this::hasVoted).setHeader("Abgestimmt").setResizable(true).setTextAlign(ColumnTextAlign.CENTER);
-        abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.JA))
-                .setHeader("Ja").setResizable(true);
-        abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.NEIN))
-                .setHeader("Nein").setResizable(true);
-
-
+        abstimmungsthemaGrid.addColumn(new LocalDateTimeRenderer<>(Abstimmungsthema::getErstelldatum, () -> DateTimeFormatter.ofPattern("EEEE H:mm 'Uhr', dd. MMMM yyyy"))).setHeader("Erstellungsdatum").setSortable(true);
+        abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.JA)).setHeader("Ja").setTextAlign(ColumnTextAlign.CENTER);
+        abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.NEIN)).setHeader("Nein").setTextAlign(ColumnTextAlign.CENTER);
         abstimmungsthemaGrid.addComponentColumn(abstimmungsthema -> {
             HorizontalLayout layout = new HorizontalLayout();
             Button yesButton = new Button("Ja", event -> handleInput(Entscheidung.JA, abstimmungsthema));
@@ -77,9 +71,10 @@ public class AbstimmungenView extends VerticalLayout {
             layout.add(noButton);
 
             return layout;
-        }).setHeader("Abstimmen").setResizable(true);
+        }).setHeader("Abstimmen").setFlexGrow(0).setTextAlign(ColumnTextAlign.CENTER);
+        abstimmungsthemaGrid.addComponentColumn(this::hasVoted).setHeader("Abgestimmt").setTextAlign(ColumnTextAlign.CENTER);
 
-
+        abstimmungsthemaGrid.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setResizable(true).setAutoWidth(true));
         add(abstimmungsthemaGrid);
     }
 
@@ -103,7 +98,7 @@ public class AbstimmungenView extends VerticalLayout {
         try {
             String result = votingService.handleVote(entscheidung, LocalDateTime.now(), securityService.getAuthenticatedUser(), abstimmungsthema);
             showNotification(Notification.Position.BOTTOM_END, result, NotificationVariant.LUMO_SUCCESS);
-            if (result.equals("Abstimmung wurde abgegeben")) {
+            if (result.equals("Stimme zurückgezogen")) {
                 logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat für das Thema " + abstimmungsthema.getTitel() + " mit " + entscheidung + " abgestimmt.");
             } else {
                 logger.info("Benutzer " + securityService.getAuthenticatedUser().getUsername() + " hat seine Abstimmung für das Thema " + abstimmungsthema.getTitel() + " zurückgezogen.");

@@ -76,10 +76,10 @@ public class CreateAbstimmungView extends VerticalLayout {
                         Status.OPEN,
                         titelTF.getValue(),
                         beschreibungTF.getValue());
-                titelTF.clear();
-                beschreibungTF.clear();
                 logger.info("Benutzer: " + securityService.getAuthenticatedUser().getUsername() + " hat eine Abstimmung erstellt mit Titel: " + titelTF.getValue());
                 showNotification(Notification.Position.BOTTOM_END, "Abstimmung erfolgreich erstellt", NotificationVariant.LUMO_SUCCESS);
+                titelTF.clear();
+                beschreibungTF.clear();
             } catch (Exception e) {
                 logger.error("Fehler beim Erstellen der Abstimmung: " + e.getMessage());
                 showNotification(Notification.Position.BOTTOM_END, "Fehler beim Erstellen der Abstimmung", NotificationVariant.LUMO_ERROR);

@@ -94,28 +94,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.hibernate.orm.tooling</groupId>
-                <artifactId>hibernate-enhance-maven-plugin</artifactId>
-                <version>${hibernate.version}</version>
-                <executions>
-                    <execution>
-                        <id>enhance</id>
-                        <goals>
-                            <goal>enhance</goal>
-                        </goals>
-                        <configuration>
-                            <enableLazyInitialization>true</enableLazyInitialization>
-                            <enableDirtyTracking>true</enableDirtyTracking>
-                            <enableAssociationManagement>true</enableAssociationManagement>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.graalvm.buildtools</groupId>
-                <artifactId>native-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
@@ -137,48 +115,15 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <activatedProperties>dev</activatedProperties>
                 <spring.profiles.active>dev</spring.profiles.active>
             </properties>
         </profile>
-        <!--        <profile>-->
-        <!--            <id>production</id>-->
-        <!--            <properties>-->
-        <!--                <vaadin.productionMode>true</vaadin.productionMode>-->
-        <!--                <activatedProperties>prod</activatedProperties>-->
-        <!--            </properties>-->
-        <!--            <build>-->
-        <!--                <plugins>-->
-        <!--                    <plugin>-->
-        <!--                        <groupId>com.vaadin</groupId>-->
-        <!--                        <artifactId>vaadin-maven-plugin</artifactId>-->
-        <!--                        <version>${vaadin.version}</version>-->
-        <!--                        <executions>-->
-        <!--                            <execution>-->
-        <!--                                <id>frontend</id>-->
-        <!--                                <phase>compile</phase>-->
-        <!--                                <goals>-->
-        <!--                                    <goal>prepare-frontend</goal>-->
-        <!--                                    <goal>build-frontend</goal>-->
-        <!--                                </goals>-->
-        <!--                            </execution>-->
-        <!--                        </executions>-->
-        <!--                    </plugin>-->
-        <!--                </plugins>-->
-        <!--            </build>-->
-        <!--        </profile>-->
         <profile>
-            <id>production</id>
-
-            <!--
-            .. configuration depending on environment ..
-             -->
+            <id>prod</id>
             <properties>
                 <vaadin.productionMode>true</vaadin.productionMode>
-                <activatedProperties>production</activatedProperties>
-                <spring.profiles.active>production</spring.profiles.active>
+                <spring.profiles.active>prod</spring.profiles.active>
             </properties>
-
             <build>
                 <plugins>
                     <plugin>
@@ -187,30 +132,20 @@
                         <version>${vaadin.version}</version>
                         <executions>
                             <execution>
+                                <id>frontend</id>
                                 <goals>
                                     <goal>prepare-frontend</goal>
                                     <goal>build-frontend</goal>
                                 </goals>
                                 <phase>compile</phase>
+                                <configuration>
+                                    <productionMode>true</productionMode>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <!-- To always force an optimized production bundle build set this configuration to 'true' -->
-                            <!-- To possibly use the pre-compiled production bundle remove or set to 'false' -->
-                            <forceProductionBuild>true</forceProductionBuild>
-                            <!-- To have reproducible build by running 'npm ci' -->
-                            <ciBuild>true</ciBuild>
-                            <productionMode>true</productionMode>
-                        </configuration>
                     </plugin>
-                    <!--
-                    .. more plugins ..
-                    -->
                 </plugins>
             </build>
-            <!--
-            .. more configuration ..
-            -->
         </profile>
     </profiles>
 </project>
