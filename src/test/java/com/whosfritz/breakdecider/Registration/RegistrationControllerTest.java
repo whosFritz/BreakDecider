@@ -20,8 +20,8 @@ public class RegistrationControllerTest {
     private RegistrationService registrationService;
 
     @AfterAll
-    public static void allTestsPassed() {        // highlight "Test passed" in green
-        // highlight "Test passed" in green
+    public static void allTestsPassed() {
+
         System.out.println("\u001B[32mAll tests passed\u001B[0m");
     }
 
@@ -51,7 +51,7 @@ public class RegistrationControllerTest {
 
         ResponseEntity<String> response = registrationController.register(request);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        // highlight "Test passed" in green
+
         System.out.println("\u001B[32mTest testInvalidTokenRegistration passed\u001B[0m");
 
         // Assert that the response status is HttpStatus.BAD_REQUEST
@@ -66,7 +66,7 @@ public class RegistrationControllerTest {
         ResponseEntity<String> response = registrationController.register(request);
         Assertions.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
 
-        // highlight "Test passed" in green
+
         System.out.println("\u001B[32mTest testConflictRegistration passed\u001B[0m");
 
         // Assert that the response status is HttpStatus.CONFLICT
@@ -81,7 +81,7 @@ public class RegistrationControllerTest {
 
         ResponseEntity<String> response = registrationController.register(request);
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        // highlight "Test passed" in green
+
         System.out.println("\u001B[32mTest testInternalServerErrorRegistration passed\u001B[0m");
 
         // Assert that the response status is HttpStatus.INTERNAL_SERVER_ERROR
