@@ -2,7 +2,10 @@ package com.whosfritz.breakdecider.ui.Views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -36,13 +39,14 @@ public class AbstimmungenView extends VerticalLayout {
     private final AbstimmungsthemaService abstimmungsthemaService;
     private final Logger logger = LoggerFactory.getLogger(AbstimmungenView.class);
     private final Grid<Abstimmungsthema> abstimmungsthemaGrid = new Grid<>();
+    private final ListDataProvider<Abstimmungsthema> listDataProvider;
 
     public AbstimmungenView(SecurityService securityService, VotingService votingService, AbstimmungsthemaService abstimmungsthemaService) {
         this.securityService = securityService;
         this.votingService = votingService;
         this.abstimmungsthemaService = abstimmungsthemaService;
 
-        ListDataProvider<Abstimmungsthema> listDataProvider = DataProvider.ofCollection(abstimmungsthemaService.getAllAbstimmungsthemen());
+        listDataProvider = DataProvider.ofCollection(abstimmungsthemaService.getAllAbstimmungsthemen());
         abstimmungsthemaGrid.setDataProvider(listDataProvider);
 
         abstimmungsthemaGrid.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
@@ -53,7 +57,7 @@ public class AbstimmungenView extends VerticalLayout {
         abstimmungsthemaGrid.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true).setResizable(true);
 
         abstimmungsthemaGrid.addColumn(abstimmungsthema -> formatDateString(abstimmungsthema.getErstelldatum().toString())).setHeader("Erstellungsdatum").setSortable(true).setResizable(true);
-
+        abstimmungsthemaGrid.addComponentColumn(this::hasVoted).setHeader("Abgestimmt").setResizable(true).setTextAlign(ColumnTextAlign.CENTER);
         abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.JA))
                 .setHeader("Ja").setResizable(true);
         abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.NEIN))
@@ -77,6 +81,19 @@ public class AbstimmungenView extends VerticalLayout {
 
 
         add(abstimmungsthemaGrid);
+    }
+
+    private Icon hasVoted(Abstimmungsthema abstimmungsthema) {
+        for (Stimmzettel stimmzettel : abstimmungsthema.getStimmzettelSet()) {
+            if (stimmzettel.getBreakDeciderUser().getId().equals(securityService.getAuthenticatedUser().getId())) {
+                Icon icon = new Icon(VaadinIcon.CHECK);
+                icon.setColor("green");
+                return icon;
+            }
+        }
+        Icon icon = new Icon(VaadinIcon.CLOSE);
+        icon.setColor("red");
+        return icon;
     }
 
     private void handleInput(
