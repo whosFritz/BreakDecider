@@ -17,6 +17,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.whosfritz.breakdecider.Data.Entities.Abstimmungsthema;
@@ -33,10 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 import static com.whosfritz.breakdecider.Registration.SecretRegistrationToken.REGISTRATION_TOKEN;
-import static com.whosfritz.breakdecider.ui.utils.formatDateString;
 import static com.whosfritz.breakdecider.ui.utils.showNotification;
 
 @RolesAllowed("ROLE_ADMIN")
@@ -84,11 +85,9 @@ public class AdminPanelView extends VerticalLayout {
         breakDeciderUserGridDataProvider = DataProvider.ofCollection(breakDeciderUserService.getAllUsers());
         breakDeciderUserGrid.setDataProvider(breakDeciderUserGridDataProvider);
 
-        breakDeciderUserGrid.getColumns().forEach(breakDeciderUserColumn -> breakDeciderUserColumn.setAutoWidth(true));
-
-        breakDeciderUserGrid.addColumn(BreakDeciderUser::getUsername).setHeader("Benutzername").setSortable(true).setResizable(true);
-        Grid.Column<BreakDeciderUser> rolleColumn = breakDeciderUserGrid.addColumn(BreakDeciderUser::getAppUserRole).setHeader("Rolle").setSortable(true).setResizable(true).setFooter(createMembershipFooterText(breakDeciderUserGridDataProvider.getItems()));
-        breakDeciderUserGrid.addColumn(BreakDeciderUser::getLocked).setHeader("Locked").setSortable(true).setResizable(true);
+        breakDeciderUserGrid.addColumn(BreakDeciderUser::getUsername).setHeader("Benutzername").setSortable(true);
+        Grid.Column<BreakDeciderUser> rolleColumn = breakDeciderUserGrid.addColumn(BreakDeciderUser::getAppUserRole).setHeader("Rolle").setSortable(true).setFooter(createMembershipFooterText(breakDeciderUserGridDataProvider.getItems()));
+        breakDeciderUserGrid.addColumn(BreakDeciderUser::getLocked).setHeader("Locked").setSortable(true);
 
         Grid.Column<BreakDeciderUser> enabledColumn = breakDeciderUserGrid.addComponentColumn(breakDeciderUser -> {
             ComboBox<Boolean> enabledComboBox = new ComboBox<>();
@@ -110,7 +109,7 @@ public class AdminPanelView extends VerticalLayout {
                 }
             });
             return enabledComboBox;
-        }).setHeader("Enabled").setSortable(true).setResizable(true).setFooter(createEnabledFooter(breakDeciderUserGridDataProvider.getItems()));
+        }).setHeader("Enabled").setSortable(true).setFooter(createEnabledFooter(breakDeciderUserGridDataProvider.getItems()));
         breakDeciderUserGrid.addColumn(
                 new ComponentRenderer<>(Button::new, (button, breakDeciderUser) -> {
                     button.addThemeVariants(ButtonVariant.LUMO_ICON,
@@ -122,18 +121,17 @@ public class AdminPanelView extends VerticalLayout {
                         breakDeciderUserGridDataProvider.refreshAll();
                     });
                     button.setIcon(new Icon(VaadinIcon.TRASH));
-                })).setHeader("Töten").setSortable(true).setResizable(true);
+                })).setHeader("Töten").setSortable(true);
 
 
         Grid<Abstimmungsthema> abstimmungsthemaGridAdmin = new Grid<>();
         abstimmungsthemaListDataProvider = DataProvider.ofCollection(abstimmungsthemaService.getAllAbstimmungsthemen());
         abstimmungsthemaGridAdmin.setDataProvider(abstimmungsthemaListDataProvider);
-        abstimmungsthemaGridAdmin.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setAutoWidth(true));
         abstimmungsthemaGridAdmin.setSelectionMode(Grid.SelectionMode.MULTI);
-        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getTitel).setHeader("Titel").setSortable(true).setResizable(true);
-        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true).setResizable(true);
-        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller").setSortable(true).setResizable(true);
-        abstimmungsthemaGridAdmin.addColumn(abstimmungsthema -> formatDateString(abstimmungsthema.getErstelldatum().toString())).setHeader("Erstellungsdatum").setSortable(true).setResizable(true);
+        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getTitel).setHeader("Titel").setSortable(true);
+        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true);
+        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller").setSortable(true);
+        abstimmungsthemaGridAdmin.addColumn(new LocalDateTimeRenderer<>(Abstimmungsthema::getErstelldatum, () -> DateTimeFormatter.ofPattern("EEEE H:mm 'Uhr', dd. MMMM yyyy"))).setHeader("Erstellungsdatum").setSortable(true);
 
         Grid.Column<Abstimmungsthema> statusColumn = abstimmungsthemaGridAdmin.addComponentColumn(abstimmungsthema -> {
             ComboBox<Status> statusComboBox = new ComboBox<>();
@@ -156,7 +154,7 @@ public class AdminPanelView extends VerticalLayout {
 
             });
             return statusComboBox;
-        }).setHeader("Status").setSortable(true).setResizable(true).setFooter(createStatusFooter(abstimmungsthemaListDataProvider.getItems()));
+        }).setHeader("Status").setSortable(true).setFooter(createStatusFooter(abstimmungsthemaListDataProvider.getItems()));
 
         abstimmungsthemaGridAdmin.addItemClickListener(event -> {
             // add selected item to the list of selected items
@@ -186,6 +184,9 @@ public class AdminPanelView extends VerticalLayout {
 
         abstimmungsthemaListDataProvider.addDataProviderListener(event -> statusColumn.setFooter(createStatusFooter(abstimmungsthemaListDataProvider.getItems())));
 
+        breakDeciderUserGrid.getColumns().forEach(breakDeciderUserColumn -> breakDeciderUserColumn.setResizable(true).setAutoWidth(true));
+        abstimmungsthemaGridAdmin.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setResizable(true).setAutoWidth(true));
+
         add(paragraph, formLayout, breakDeciderUserGrid, abstimmungsthemaGridAdmin, deleteAbstimmungButton);
     }
 
@@ -197,7 +198,7 @@ public class AdminPanelView extends VerticalLayout {
                 .filter(person -> AppUserRole.ROLE_ADMIN.equals(person.getAppUserRole()))
                 .count();
 
-        return String.format("%s Users insgesamt, %s Nicht-Admins, %s Admins", regularCount,
+        return String.format("%s Benutzer insgesamt, %s Nicht-Admins, %s Admins", regularCount,
                 userCount, adminCount);
     }
 
