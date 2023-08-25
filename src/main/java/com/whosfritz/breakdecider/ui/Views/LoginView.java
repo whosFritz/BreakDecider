@@ -1,5 +1,7 @@
 package com.whosfritz.breakdecider.ui.Views;
 
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
@@ -38,7 +40,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
         i18nForm.setSubmit("Anmelden");
         i18nForm.setForgotPassword("Passwort vergessen?");
         i18n.setForm(i18nForm);
-
+        loginForm.setEnabled(false);
         LoginI18n.ErrorMessage i18nErrorMessage = i18n.getErrorMessage();
         i18nErrorMessage.setTitle("Fehler");
         i18nErrorMessage.setMessage(
@@ -52,9 +54,25 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
         loginForm.setI18n(i18n);
         Image image = new Image("images/img-login.png", "LOGO");
 
+        Checkbox checkbox = new Checkbox();
+        // link inside the label
+        checkbox.setLabel("Ich habe die Datenschutzerklärung gelesen und akzeptiere diese.");
+        checkbox.addValueChangeListener(event -> {
+            if (event.getValue()) {
+                loginForm.setEnabled(true);
+            } else {
+                loginForm.setEnabled(false);
+            }
+        });
+        Anchor datenschutz = new Anchor("https://github.com/whosFritz/BreakDecider/blob/main/datenschutzerklaerung.md", "Datenschutzerklärung");
+        Anchor impressum = new Anchor("https://github.com/whosFritz/BreakDecider/blob/main/impressum.md", "Impressum");
+
         add(
                 image,
-                loginForm
+                loginForm,
+                checkbox,
+                datenschutz,
+                impressum
         );
     }
 
