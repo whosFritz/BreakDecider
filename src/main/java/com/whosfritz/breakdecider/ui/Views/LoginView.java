@@ -65,7 +65,9 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
             }
         });
         Anchor datenschutz = new Anchor("https://github.com/whosFritz/BreakDecider/blob/main/datenschutzerklaerung.md", "Datenschutzerklärung");
+        datenschutz.setTarget("_blank");
         Anchor impressum = new Anchor("https://github.com/whosFritz/BreakDecider/blob/main/impressum.md", "Impressum");
+        impressum.setTarget("_blank");
 
         add(
                 image,
