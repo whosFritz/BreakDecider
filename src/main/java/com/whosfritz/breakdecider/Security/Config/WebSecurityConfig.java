@@ -29,6 +29,9 @@ public class WebSecurityConfig extends VaadinWebSecurity {
             auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/v*/registration/**")).permitAll();// <3>
             auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/images/*.png")).permitAll();//
             auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/v*/registration/**")).permitAll();
+            auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/actuator/*")).permitAll();
+            auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/actuator")).permitAll();
+
         });
         super.configure(http);
         http.authenticationProvider(authenticationProvider());
