@@ -22,7 +22,7 @@ Hauptstra&szlig;e 4a<br />
 08340 Schwarzenberg</p>
 
 <p>Telefon: +49 (0) 1627497832<br />
-E-Mail: fritzschubert21@outlook.de</p>
+E-Mail: fritz.schubert@whosfritz.de</p>
  <p>Verantwortliche Stelle ist die nat&uuml;rliche oder juristische Person, die allein oder gemeinsam mit anderen &uuml;ber die Zwecke und Mittel der Verarbeitung von personenbezogenen Daten (z.&nbsp;B. Namen, E-Mail-Adressen o. &Auml;.) entscheidet.</p>
 
 <h3>Speicherdauer</h3> <p>Soweit innerhalb dieser Datenschutzerkl&auml;rung keine speziellere Speicherdauer genannt
