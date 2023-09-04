@@ -79,7 +79,7 @@ public class BreakDeciderUser implements UserDetails {
 
     @Override
     public String toString() {
-        return "BreakDeciderUser(id=" + id + ", username=" + username + ")";
+        return "BreakDeciderUser(id=" + id + ", username=" + username + ", app_user_role=" + appUserRole + ")";
     }
 
 }

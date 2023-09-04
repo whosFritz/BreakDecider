@@ -1,12 +1,15 @@
 package com.whosfritz.breakdecider.Data.Services;
 
 import com.whosfritz.breakdecider.Data.Entities.Abstimmungsthema;
+import com.whosfritz.breakdecider.Data.Entities.AppUserRole;
 import com.whosfritz.breakdecider.Data.Entities.BreakDeciderUser;
 import com.whosfritz.breakdecider.Data.Entities.Stimmzettel;
 import com.whosfritz.breakdecider.Data.Repositories.BreakDeciderUserRepository;
 import com.whosfritz.breakdecider.Exception.NewEqualsOldPasswordException;
 import com.whosfritz.breakdecider.Exception.PasswordIncorrectException;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,9 +23,9 @@ import java.util.List;
 @AllArgsConstructor
 public class BreakDeciderUserService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
     private final BreakDeciderUserRepository breakDeciderUserRepository;
     private final StimmzettelService stimmzettelService;
+    private final Logger logger = LoggerFactory.getLogger(BreakDeciderUserService.class);
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -100,5 +103,16 @@ public class BreakDeciderUserService implements UserDetailsService {
     public void disableUser(BreakDeciderUser breakDeciderUser) {
         breakDeciderUser.setEnabled(false);
         save(breakDeciderUser);
+    }
+
+    public BreakDeciderUser changeUserRole(BreakDeciderUser breakDeciderUser, AppUserRole changedAppUserRole) {
+        try {
+            breakDeciderUser = getUserByUsername(breakDeciderUser.getUsername());
+            breakDeciderUser.setAppUserRole(changedAppUserRole);
+            return save(breakDeciderUser);
+        } catch (Exception e) {
+            logger.error("Benutzer rolle konnte nicht geändert werden von " + breakDeciderUser.getUsername());
+        }
+        return breakDeciderUser;
     }
 }
