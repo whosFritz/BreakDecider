@@ -3,12 +3,14 @@ package com.whosfritz.breakdecider.Registration;
 import com.whosfritz.breakdecider.Data.Entities.BreakDeciderUser;
 import com.whosfritz.breakdecider.Data.Services.BreakDeciderUserService;
 import com.whosfritz.breakdecider.Exception.InvalidTokenException;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.whosfritz.breakdecider.Registration.SecretRegistrationToken.REGISTRATION_TOKEN;
 
 @Service
+@Timed
 public class RegistrationService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -19,6 +21,7 @@ public class RegistrationService {
         this.breakDeciderUserService = breakDeciderUserService;
     }
 
+    @Timed(value = "registration_register", description = "Time taken to register a user")
     public BreakDeciderUser register(RegistrationRequest request) {
         if (request.getSecret_token() == null)
             throw new InvalidTokenException("Token ist ungültig");
