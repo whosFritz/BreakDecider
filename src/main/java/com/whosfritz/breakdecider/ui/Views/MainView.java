@@ -71,14 +71,7 @@ public class MainView extends AppLayout {
      */
     private Component createDrawerContent(Tabs menu) {
         VerticalLayout layout = new VerticalLayout();
-        H2 topMenu = new H2("Menü");
-        topMenu.addClassNames("menu-titel");
-        layout.add(topMenu);
         layout.setSizeFull();
-        layout.setPadding(false);
-        layout.setSpacing(false);
-        layout.setAlignItems(FlexComponent.Alignment.STRETCH);
-        layout.setAlignItems(FlexComponent.Alignment.CENTER);
 
         HorizontalLayout logoLayout = new HorizontalLayout();
         logoLayout.setId("logo");
