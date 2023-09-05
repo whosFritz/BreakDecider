@@ -51,12 +51,12 @@ public class AbstimmungenView extends VerticalLayout {
         abstimmungsthemaGrid.setDataProvider(listDataProvider);
 
 
-        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getStatus).setHeader("Status").setSortable(true);
-        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getTitel).setHeader("Titel").setSortable(true);
-        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller").setSortable(true);
-        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true);
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getStatus).setHeader("Status");
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getTitel).setHeader("Titel");
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller");
+        abstimmungsthemaGrid.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung");
 
-        abstimmungsthemaGrid.addColumn(new LocalDateTimeRenderer<>(Abstimmungsthema::getErstelldatum, () -> DateTimeFormatter.ofPattern("EEEE H:mm 'Uhr', dd. MMMM yyyy", Locale.GERMANY))).setHeader("Erstellungsdatum").setSortable(true);
+        abstimmungsthemaGrid.addColumn(new LocalDateTimeRenderer<>(Abstimmungsthema::getErstelldatum, () -> DateTimeFormatter.ofPattern("EEEE H:mm 'Uhr', dd. MMMM yyyy", Locale.GERMANY))).setHeader("Erstellungsdatum");
         abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.JA)).setHeader("Ja").setTextAlign(ColumnTextAlign.CENTER);
         abstimmungsthemaGrid.addColumn(abstimmungsthema -> countVotes(abstimmungsthema, Entscheidung.NEIN)).setHeader("Nein").setTextAlign(ColumnTextAlign.CENTER);
         abstimmungsthemaGrid.addComponentColumn(abstimmungsthema -> {
@@ -75,7 +75,7 @@ public class AbstimmungenView extends VerticalLayout {
         }).setHeader("Abstimmen").setFlexGrow(0).setTextAlign(ColumnTextAlign.CENTER);
         abstimmungsthemaGrid.addComponentColumn(this::hasVoted).setHeader("Abgestimmt").setTextAlign(ColumnTextAlign.CENTER);
 
-        abstimmungsthemaGrid.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setResizable(true).setAutoWidth(true));
+        abstimmungsthemaGrid.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setResizable(true).setAutoWidth(true).setSortable(true));
         add(abstimmungsthemaGrid);
     }
 

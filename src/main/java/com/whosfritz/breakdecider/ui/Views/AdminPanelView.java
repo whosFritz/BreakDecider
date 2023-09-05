@@ -86,31 +86,61 @@ public class AdminPanelView extends VerticalLayout {
         breakDeciderUserGridDataProvider = DataProvider.ofCollection(breakDeciderUserService.getAllUsers());
         breakDeciderUserGrid.setDataProvider(breakDeciderUserGridDataProvider);
 
-        breakDeciderUserGrid.addColumn(BreakDeciderUser::getUsername).setHeader("Benutzername").setSortable(true);
-        Grid.Column<BreakDeciderUser> rolleColumn = breakDeciderUserGrid.addColumn(BreakDeciderUser::getAppUserRole).setHeader("Rolle").setSortable(true).setFooter(createMembershipFooterText(breakDeciderUserGridDataProvider.getItems()));
-        breakDeciderUserGrid.addColumn(BreakDeciderUser::getLocked).setHeader("Locked").setSortable(true);
+        breakDeciderUserGrid.addColumn(BreakDeciderUser::getUsername).setHeader("Benutzername");
 
-        Grid.Column<BreakDeciderUser> enabledColumn = breakDeciderUserGrid.addComponentColumn(breakDeciderUser -> {
-            ComboBox<Boolean> enabledComboBox = new ComboBox<>();
-            enabledComboBox.setItems(true, false);
-            enabledComboBox.setValue(breakDeciderUser.isEnabled());
-            enabledComboBox.addValueChangeListener(event -> {
-                Boolean changedEnabled = event.getValue();
-                if (changedEnabled != breakDeciderUser.isEnabled()) {
-                    if (changedEnabled) {
-                        breakDeciderUserService.enableUser(breakDeciderUser);
-                        showNotification(Notification.Position.BOTTOM_END, "Benutzer freigeschaltet", NotificationVariant.LUMO_SUCCESS);
-                        logger.info("Benutzer: " + breakDeciderUser.getUsername() + " freigeschaltet von: " + this.securityService.getAuthenticatedUser().getUsername());
+
+        Grid.Column<BreakDeciderUser> rolleColumn = breakDeciderUserGrid.addComponentColumn(
+                breakDeciderUser -> {
+                    ComboBox<AppUserRole> appUserRoleComboBox = new ComboBox<>();
+                    appUserRoleComboBox.setItems(AppUserRole.ROLE_USER, AppUserRole.ROLE_ADMIN);
+                    // if user admin color it red if user green
+                    applyColorRole(breakDeciderUser, appUserRoleComboBox);
+
+                    appUserRoleComboBox.setValue(breakDeciderUser.getAppUserRole());
+                    appUserRoleComboBox.addValueChangeListener(event -> {
+                        AppUserRole changedAppUserRole = event.getValue();
+                        showNotification(Notification.Position.BOTTOM_END, "Rolle geändert von", NotificationVariant.LUMO_SUCCESS);
+                        logger.info("Rolle von Benutzer: " + breakDeciderUser.getUsername() + " geändert von: " + this.securityService.getAuthenticatedUser().getUsername());
+                        BreakDeciderUser breakDeciderUserNew = breakDeciderUserService.changeUserRole(breakDeciderUser, changedAppUserRole);
+                        breakDeciderUserGridDataProvider.refreshItem(breakDeciderUserNew);
+                        applyColorRole(breakDeciderUserNew, appUserRoleComboBox);
+                    });
+                    return appUserRoleComboBox;
+                }).setHeader("Rolle").setFooter(createMembershipFooterText(breakDeciderUserGridDataProvider.getItems()));
+        breakDeciderUserGrid.addColumn(BreakDeciderUser::getLocked).setHeader("Locked");
+
+        Grid.Column<BreakDeciderUser> enabledColumn = breakDeciderUserGrid.addComponentColumn(
+                breakDeciderUser -> {
+                    ComboBox<Boolean> enabledComboBox = new ComboBox<>();
+                    enabledComboBox.setItems(true, false);
+                    enabledComboBox.setValue(breakDeciderUser.isEnabled());
+
+                    // if enabled green, if disabled red
+                    if (breakDeciderUser.isEnabled()) {
+                        enabledComboBox.getStyle().set("color", "green");
                     } else {
-                        breakDeciderUserService.disableUser(breakDeciderUser);
-                        showNotification(Notification.Position.BOTTOM_END, "Benutzer gesperrt", NotificationVariant.LUMO_SUCCESS);
-                        logger.info("Benutzer: " + breakDeciderUser.getUsername() + " gesperrt von: " + this.securityService.getAuthenticatedUser().getUsername());
+                        enabledComboBox.getStyle().set("color", "red");
                     }
-                    breakDeciderUserGridDataProvider.refreshItem(breakDeciderUser);
-                }
-            });
-            return enabledComboBox;
-        }).setHeader("Enabled").setSortable(true).setFooter(createEnabledFooter(breakDeciderUserGridDataProvider.getItems()));
+
+                    enabledComboBox.addValueChangeListener(event -> {
+                        Boolean changedEnabled = event.getValue();
+                        if (changedEnabled != breakDeciderUser.isEnabled()) {
+                            if (changedEnabled) {
+                                breakDeciderUserService.enableUser(breakDeciderUser);
+                                showNotification(Notification.Position.BOTTOM_END, "Benutzer freigeschaltet", NotificationVariant.LUMO_SUCCESS);
+                                logger.info("Benutzer: " + breakDeciderUser.getUsername() + " freigeschaltet von: " + this.securityService.getAuthenticatedUser().getUsername());
+                                enabledComboBox.getStyle().set("color", "green");
+                            } else {
+                                breakDeciderUserService.disableUser(breakDeciderUser);
+                                showNotification(Notification.Position.BOTTOM_END, "Benutzer gesperrt", NotificationVariant.LUMO_SUCCESS);
+                                logger.info("Benutzer: " + breakDeciderUser.getUsername() + " gesperrt von: " + this.securityService.getAuthenticatedUser().getUsername());
+                                enabledComboBox.getStyle().set("color", "red");
+                            }
+                            breakDeciderUserGridDataProvider.refreshItem(breakDeciderUser);
+                        }
+                    });
+                    return enabledComboBox;
+                }).setHeader("Enabled").setFooter(createEnabledFooter(breakDeciderUserGridDataProvider.getItems()));
         breakDeciderUserGrid.addColumn(
                 new ComponentRenderer<>(Button::new, (button, breakDeciderUser) -> {
                     button.addThemeVariants(ButtonVariant.LUMO_ICON,
@@ -122,22 +152,29 @@ public class AdminPanelView extends VerticalLayout {
                         breakDeciderUserGridDataProvider.refreshAll();
                     });
                     button.setIcon(new Icon(VaadinIcon.TRASH));
-                })).setHeader("Töten").setSortable(true);
+                })).setHeader("Töten");
 
 
         Grid<Abstimmungsthema> abstimmungsthemaGridAdmin = new Grid<>();
         abstimmungsthemaListDataProvider = DataProvider.ofCollection(abstimmungsthemaService.getAllAbstimmungsthemen());
         abstimmungsthemaGridAdmin.setDataProvider(abstimmungsthemaListDataProvider);
         abstimmungsthemaGridAdmin.setSelectionMode(Grid.SelectionMode.MULTI);
-        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getTitel).setHeader("Titel").setSortable(true);
-        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung").setSortable(true);
-        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller").setSortable(true);
-        abstimmungsthemaGridAdmin.addColumn(new LocalDateTimeRenderer<>(Abstimmungsthema::getErstelldatum, () -> DateTimeFormatter.ofPattern("EEEE H:mm 'Uhr', dd. MMMM yyyy", Locale.GERMANY))).setHeader("Erstellungsdatum").setSortable(true);
+        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getTitel).setHeader("Titel");
+        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getBeschreibung).setHeader("Beschreibung");
+        abstimmungsthemaGridAdmin.addColumn(Abstimmungsthema::getErsteller).setHeader("Ersteller");
+        abstimmungsthemaGridAdmin.addColumn(new LocalDateTimeRenderer<>(Abstimmungsthema::getErstelldatum, () -> DateTimeFormatter.ofPattern("EEEE H:mm 'Uhr', dd. MMMM yyyy", Locale.GERMANY))).setHeader("Erstellungsdatum");
 
         Grid.Column<Abstimmungsthema> statusColumn = abstimmungsthemaGridAdmin.addComponentColumn(abstimmungsthema -> {
             ComboBox<Status> statusComboBox = new ComboBox<>();
             statusComboBox.setItems(Status.OPEN, Status.CLOSED);
             statusComboBox.setValue(abstimmungsthema.getStatus());
+            //if open green, if closed red
+            if (abstimmungsthema.getStatus() == Status.OPEN) {
+                statusComboBox.getStyle().set("color", "green");
+            } else {
+                statusComboBox.getStyle().set("color", "red");
+            }
+
             statusComboBox.addValueChangeListener(event -> {
                 Status changedStatus = event.getValue();
                 if (changedStatus != abstimmungsthema.getStatus()) {
@@ -145,17 +182,19 @@ public class AdminPanelView extends VerticalLayout {
                         abstimmungsthemaService.closeAbstimmungsthema(abstimmungsthema);
                         showNotification(Notification.Position.BOTTOM_END, "Abstimmung geschlossen", NotificationVariant.LUMO_SUCCESS);
                         logger.info("Abstimmung mit Titel: " + abstimmungsthema.getTitel() + " geschlossen von: " + this.securityService.getAuthenticatedUser().getUsername());
+                        statusComboBox.getStyle().set("color", "red");
                     } else {
                         abstimmungsthemaService.openAbstimmungsthema(abstimmungsthema);
                         showNotification(Notification.Position.BOTTOM_END, "Wieder eröffnet Abstimmung geöffnet", NotificationVariant.LUMO_SUCCESS);
                         logger.info("Abstimmung mit Titel: " + abstimmungsthema.getTitel() + " wurde geöffnet von: " + this.securityService.getAuthenticatedUser().getUsername());
+                        statusComboBox.getStyle().set("color", "green");
                     }
                     abstimmungsthemaListDataProvider.refreshItem(abstimmungsthema);
                 }
 
             });
             return statusComboBox;
-        }).setHeader("Status").setSortable(true).setFooter(createStatusFooter(abstimmungsthemaListDataProvider.getItems()));
+        }).setHeader("Status").setFooter(createStatusFooter(abstimmungsthemaListDataProvider.getItems()));
 
         abstimmungsthemaGridAdmin.addItemClickListener(event -> {
             // add selected item to the list of selected items
@@ -185,10 +224,18 @@ public class AdminPanelView extends VerticalLayout {
 
         abstimmungsthemaListDataProvider.addDataProviderListener(event -> statusColumn.setFooter(createStatusFooter(abstimmungsthemaListDataProvider.getItems())));
 
-        breakDeciderUserGrid.getColumns().forEach(breakDeciderUserColumn -> breakDeciderUserColumn.setResizable(true).setAutoWidth(true));
-        abstimmungsthemaGridAdmin.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setResizable(true).setAutoWidth(true));
+        breakDeciderUserGrid.getColumns().forEach(breakDeciderUserColumn -> breakDeciderUserColumn.setResizable(true).setAutoWidth(true).setSortable(true));
+        abstimmungsthemaGridAdmin.getColumns().forEach(abstimmungsthemaColumn -> abstimmungsthemaColumn.setResizable(true).setAutoWidth(true).setSortable(true));
 
         add(paragraph, formLayout, breakDeciderUserGrid, abstimmungsthemaGridAdmin, deleteAbstimmungButton);
+    }
+
+    private static void applyColorRole(BreakDeciderUser breakDeciderUser, ComboBox<AppUserRole> appUserRoleComboBox) {
+        if (AppUserRole.ROLE_USER.equals(breakDeciderUser.getAppUserRole())) {
+            appUserRoleComboBox.getStyle().set("color", "green");
+        } else {
+            appUserRoleComboBox.getStyle().set("color", "red");
+        }
     }
 
     private static String createMembershipFooterText(Collection<BreakDeciderUser> breakDeciderUsers) {
