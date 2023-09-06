@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class BreakDeciderUserService implements UserDetailsService {
     }
 
 
-    @Transactional
+    // @Transactional
     public void deleteUserWithStimmzettel(Long userId) {
         List<Stimmzettel> stimmzettelList = stimmzettelService.getAllStimmzettelByUserId(userId);
 
