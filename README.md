@@ -2,6 +2,9 @@
 
 Welcome to BreakDecider, a voting application developed by whosFritz. BreakDecider is designed to facilitate voting on yes-or-no questions, primarily targeted towards students. Users can log in, create voting topics, and cast their votes. Additionally, the teacher role comes with admin privileges, enabling them to manage posts and deactivate users. The application is built using Spring Boot, Maven, Vaadin, and MariaDB, and it's deployed to an Apache2 web server.
 
+## Access 🔓 
+If u want access to the voting application feel free to contact Fritz through mail => Fritz.Schubert@whosfritz.de
+
 ## Features ✨
 
 - User Authentication: Students and teachers can log in securely to access the application.
